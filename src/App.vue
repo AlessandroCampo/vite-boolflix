@@ -10,7 +10,8 @@ import { store } from '../src/store'
 export default {
   data() {
     return {
-      trendingMovies: [{}]
+      trendingMovies: [{}],
+      store
     };
   },
   methods: {},
@@ -19,7 +20,8 @@ export default {
       this.trendingMovies = res.data.results
     });
   },
-  components: { AppHeader, AppPreview, AppRow }
+  components: { AppHeader, AppPreview, AppRow },
+
 }
 
 </script>
@@ -33,6 +35,8 @@ export default {
     <AppPreview />
   </section>
   <section class="rows-cont">
+
+    <AppRow rowTitle="your research" :moviesArray="store.foundMovies" v-if="store.foundMovies.length > 1" />
     <AppRow rowTitle="Trending on Boolflix" :moviesArray="trendingMovies" />
   </section>
 </template>

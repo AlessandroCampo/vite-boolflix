@@ -10,7 +10,13 @@
             </p>
             <div class="flex items-center gap-3">
                 <img :src="convertFlag(store.activeMovie.original_language)" alt="">
-                {{ store.activeMovie.vote_average }} ({{ store.activeMovie.vote_count }})
+                <div class="review">
+                    {{ store.activeMovie.vote_average }}
+                    <i class="fa-solid fa-star text-yellow-400"></i>
+                    ({{ store.activeMovie.vote_count }})
+
+                </div>
+
             </div>
 
             <button @click="() => { trailerWatch = !trailerWatch }">

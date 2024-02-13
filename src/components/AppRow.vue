@@ -48,12 +48,13 @@ h2 {
 
 .row-container {
     position: relative;
+    margin-top: 1em;
+    margin-bottom: 2em;
 
     .row {
         width: 100%;
         display: flex;
         gap: 30px;
-        margin-top: 1em;
         overflow: hidden;
         transition: transform 0.5s ease;
 

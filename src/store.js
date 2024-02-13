@@ -13,6 +13,7 @@ export const store = reactive({
         axios.get(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${this.apiKey}`).then((res) => {
             res.data.results.forEach(res => {
                 if (res.type === "Teaser" && res.official && res.site === "YouTube") {
+                    console.log(res)
                     this.previewID = res.key
                     return
                 }
