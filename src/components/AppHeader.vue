@@ -61,7 +61,7 @@ export default {
 
 <style lang="scss" scoped>
 .header-container {
-    width: 80%;
+    width: 95%;
     margin: 0 auto;
     display: flex;
     align-items: center;

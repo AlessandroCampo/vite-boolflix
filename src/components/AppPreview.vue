@@ -1,6 +1,6 @@
 <template>
     <figure :style="{ backgroundImage: `url('https://image.tmdb.org/t/p/original/${store.activeMovie.backdrop_path}')` }"
-        v-if="store.foundMovies[0].title">
+        v-if="store.activeMovie">
         <div class="movie-info">
             <p class="title">
                 {{ store.activeMovie.title }}
@@ -8,6 +8,10 @@
             <p class="description">
                 {{ store.activeMovie.overview }}
             </p>
+            <div class="flex items-center gap-3">
+                <img :src="convertFlag(store.activeMovie.original_language)" alt="">
+                {{ store.activeMovie.vote_average }} ({{ store.activeMovie.vote_count }})
+            </div>
 
             <button @click="() => { trailerWatch = !trailerWatch }">
                 <i :class="!trailerWatch ? 'fa-solid fa-play' : 'fa-solid fa-xmark'"></i>
@@ -20,6 +24,12 @@
 
 
 
+
+    </figure>
+    <figure id="homeBG" v-else>
+        <div>
+            Find and watch awesome movies & TV shows ('s trailers :\')
+        </div>
     </figure>
 </template>
 
@@ -31,36 +41,51 @@ export default {
             store,
             trailerWatch: false
         }
+    },
+    methods: {
+        convertFlag(code) {
+            if (code === "en") {
+                code = "us"
+            } else if (code === "ko") {
+                code = "kr"
+            }
+            return `https://flagsapi.com/${code.toUpperCase()}/shiny/64.png`
+        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
 figure {
-    height: 70vh;
+    height: 80vh;
+    width: 100vw;
     background-size: cover;
-    /* Adjusted */
     background-repeat: no-repeat;
     background-position: 50% 10%;
     position: relative;
 
-    /* Adjusted */
     .movie-info {
         background-color: rgba(0, 0, 0, 0.6);
         color: white;
         width: fit-content;
-        max-width: 25%;
+        max-width: 30%;
         padding: 30px;
         display: flex;
         flex-direction: column;
         gap: 1em;
+        max-height: 80%;
         position: absolute;
         left: 5%;
         bottom: 5%;
+        overflow: hidden;
 
         .title {
             text-transform: uppercase;
-            font-size: 3em;
+            font-size: 2.5em;
+            white-space: nowrap;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         button {
@@ -82,5 +107,21 @@ figure {
             }
         }
     }
+}
+
+figure#homeBG {
+    background-image: url('../assets/img/homepage_bg.jpg');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    div {
+        font-size: 45px;
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+        width: fit-content;
+        padding: 20px;
+    }
+
 }
 </style>
