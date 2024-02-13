@@ -44,10 +44,26 @@ export default {
     },
     methods: {
         getMovies() {
+            store.foundMovies = []
             console.log("clicked")
             axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
-                console.log(res.data);
+                // console.log(res.data.title);
+                // console.log(res.data.original_title);
+                // console.log(res.data.original_language);
+                // console.log(res.data.vote_average);
+                store.foundMovies = res.data.results
+                console.log(store.foundMovies)
+                store.foundMovies.forEach((movie) => {
+                    if (movie.popularity > 2) {
+                        console.log(movie.title);
+                        console.log(movie.original_title);
+                        console.log(movie.original_language);
+                        console.log(movie.vote_average);
+                    }
+
+                })
             });
+
         }
     }
 }

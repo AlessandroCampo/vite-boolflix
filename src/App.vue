@@ -1,6 +1,7 @@
 <script >
 import axios from 'axios';
 import AppHeader from './components/AppHeader.vue';
+import AppPreview from './components/AppPreview.vue';
 
 
 import { store } from '../src/store'
@@ -9,14 +10,14 @@ export default {
   data() {
     return {};
   },
-  components: ['AppHeader'],
   methods: {},
   created() {
-    axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
-      console.log(res.data);
-    });
+    console.log(store.foundMovies.length)
+    axios.get('https://api.themoviedb.org/3/movie/362637?api_key=28667855a3c2bb6baed15553d94fadd3').then((res) => {
+      console.log(res)
+    })
   },
-  components: { AppHeader }
+  components: { AppHeader, AppPreview }
 }
 
 </script>
@@ -26,6 +27,9 @@ export default {
   <header>
     <AppHeader />
   </header>
+  <section>
+    <AppPreview />
+  </section>
 </template>
 
 <style scoped lang="scss">
