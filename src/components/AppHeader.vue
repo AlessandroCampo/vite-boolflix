@@ -20,7 +20,7 @@
                 <button @click="getMovies()">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-                <input type="text" v-model="store.searchString">
+                <input type="text" v-model="store.searchString" @keyup.enter="getMovies()">
             </div>
             <dv class="account">
                 A
@@ -44,24 +44,14 @@ export default {
     },
     methods: {
         getMovies() {
+            // reset my array
             store.foundMovies = []
-            console.log("clicked")
             axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
-                // console.log(res.data.title);
-                // console.log(res.data.original_title);
-                // console.log(res.data.original_language);
-                // console.log(res.data.vote_average);
                 store.foundMovies = res.data.results
-                console.log(store.foundMovies)
-                store.foundMovies.forEach((movie) => {
-                    if (movie.popularity > 2) {
-                        console.log(movie.title);
-                        console.log(movie.original_title);
-                        console.log(movie.original_language);
-                        console.log(movie.vote_average);
-                    }
+                store.foundMovies.sort((a, b) => b.popularity - a.popularity)
+                store.activeMovie = store.foundMovies[0]
+                store.getTrailer(store.activeMovie.id)
 
-                })
             });
 
         }

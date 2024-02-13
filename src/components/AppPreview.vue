@@ -1,14 +1,25 @@
 <template>
-    <figure :style="{ backgroundImage: `url('https://image.tmdb.org/t/p/original/${store.foundMovies[0].backdrop_path}')` }"
+    <figure :style="{ backgroundImage: `url('https://image.tmdb.org/t/p/original/${store.activeMovie.backdrop_path}')` }"
         v-if="store.foundMovies[0].title">
         <div class="movie-info">
             <p class="title">
-                {{ store.foundMovies[0].title }}
+                {{ store.activeMovie.title }}
             </p>
             <p class="description">
-                {{ store.foundMovies[0].overview }}
+                {{ store.activeMovie.overview }}
             </p>
+
+            <button @click="() => { trailerWatch = !trailerWatch }">
+                <i :class="!trailerWatch ? 'fa-solid fa-play' : 'fa-solid fa-xmark'"></i>
+                {{ !trailerWatch ? 'watch trailer' : 'close trailer' }}
+            </button>
         </div>
+        <iframe width="100%" height="100%" :src="`https://www.youtube.com/embed/${store.previewID}?autoplay=1`"
+            v-if="trailerWatch">
+        </iframe>
+
+
+
     </figure>
 </template>
 
@@ -18,6 +29,7 @@ export default {
     data() {
         return {
             store,
+            trailerWatch: false
         }
     }
 }
@@ -49,6 +61,25 @@ figure {
         .title {
             text-transform: uppercase;
             font-size: 3em;
+        }
+
+        button {
+            width: fit-content;
+            background-color: white;
+            color: black;
+            padding-block: 0.5em;
+            padding-inline: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+            font-size: 18px;
+            border-radius: 20px;
+
+            i {
+                font-size: 22px;
+            }
         }
     }
 }
