@@ -17,6 +17,7 @@ export default {
         updateActive(movie) {
             console.log(movie)
             store.activeMovie = movie
+            store.getTrailer(store.activeMovie.id)
         }
     }
 }
@@ -26,5 +27,6 @@ export default {
 div.card {
     width: calc((100% - 4 * 30px) / 5);
     flex-shrink: 0;
+    cursor: pointer;
 }
 </style>
