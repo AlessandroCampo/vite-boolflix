@@ -10,6 +10,7 @@ import { store } from '../src/store'
 export default {
   data() {
     return {
+      searchBool: true,
       trendingAll: [{}],
       popularAll: [],
       topRatedAll: [],
@@ -91,7 +92,8 @@ export default {
     <AppPreview />
   </section>
   <section class="rows-cont">
-    <AppRow rowTitle="your research" :moviesArray="store.foundMovies" v-if="store.foundMovies.length > 1" />
+    <AppRow rowTitle="your research" :research="searchBool" :moviesArray="store.foundMovies"
+      v-if="store.foundMovies.length > 1" />
     <AppRow rowTitle="Trending on Boolflix" :moviesArray="trendingAll" v-if="store.page === 'Home'" />
     <AppRow rowTitle="Most popular on Boolflix" :moviesArray="popularAll" v-if="store.page === 'Home'" />
     <AppRow rowTitle="Top Rated on Boolflix" :moviesArray="topRatedAll" v-if="store.page === 'Home'" />
@@ -116,7 +118,6 @@ header {
 }
 
 .rows-cont {
-  width: 95%;
   margin: 0 auto;
   padding-block: 30px;
 }

@@ -48,8 +48,8 @@ export default {
             store.foundMovies = []
             axios.get(`https://api.themoviedb.org/3/search/multi?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
                 store.foundMovies = res.data.results
-                console.log(res.data.results)
-                store.foundMovies.sort((a, b) => b.popularity - a.popularity)
+                store.foundMovies.sort((a, b) => b.vote_count - a.vote_count)
+                console.log(store.foundMovies)
                 store.activeMovie = store.foundMovies[0]
                 store.getTrailer(store.activeMovie.id)
 
