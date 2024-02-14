@@ -3,7 +3,7 @@
         v-if="store.activeMovie">
         <div class="movie-info">
             <p class="title">
-                {{ store.activeMovie.title }}
+                {{ store.activeMovie.title ? store.activeMovie.title : store.activeMovie.name }}
             </p>
             <p class="description">
                 {{ store.activeMovie.overview }}
@@ -11,8 +11,11 @@
             <div class="flex items-center gap-3">
                 <img :src="convertFlag(store.activeMovie.original_language)" alt="">
                 <div class="review">
-                    {{ store.activeMovie.vote_average }}
-                    <i class="fa-solid fa-star text-yellow-400"></i>
+                    {{ store.roundHalveNumber(store.activeMovie.vote_average) }}
+                    <i class="fa-solid fa-star text-yellow-400" v-for="index in store.starsNumber" :key="index"></i>
+                    <i class="fa-solid fa-star-half-stroke text-yellow-400" v-for="index in store.starsHalf"
+                        :key="index"></i>
+                    <i class="fa-regular fa-star" v-for="index in store.emptyStars" :key="index"></i>
                     ({{ store.activeMovie.vote_count }})
 
                 </div>
@@ -56,7 +59,11 @@ export default {
                 code = "kr"
             }
             return `https://flagsapi.com/${code.toUpperCase()}/shiny/64.png`
-        }
+        },
+
+    },
+    computed: {
+
     }
 }
 </script>

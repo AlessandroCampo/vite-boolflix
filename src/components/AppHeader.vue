@@ -6,9 +6,9 @@
 
         <nav>
             <ul>
-                <li> Home </li>
-                <li> Series </li>
-                <li> Movies </li>
+                <li class="active" @click="changePage('Home', $event)"> Home </li>
+                <li @click="changePage('Series', $event)"> Series </li>
+                <li @click="changePage('Movies', $event)"> Movies </li>
             </ul>
         </nav>
 
@@ -46,14 +46,25 @@ export default {
         getMovies() {
             // reset my array
             store.foundMovies = []
-            axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
+            axios.get(`https://api.themoviedb.org/3/search/multi?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
                 store.foundMovies = res.data.results
+                console.log(res.data.results)
                 store.foundMovies.sort((a, b) => b.popularity - a.popularity)
                 store.activeMovie = store.foundMovies[0]
                 store.getTrailer(store.activeMovie.id)
 
             });
 
+        },
+        changePage(newPage, e) {
+            const menuLinks = document.querySelectorAll("header ul li")
+            menuLinks.forEach((link) => {
+                console.log("removing")
+                link.classList.remove("active")
+            })
+            store.page = newPage
+            console.log(store.page)
+            e.target.classList.add("active")
         }
     }
 }
@@ -81,10 +92,21 @@ export default {
         display: flex;
         justify-content: center;
 
+
         ul {
             display: flex;
             gap: 2em;
             font-size: 20px;
+
+            li {
+                padding: 12px;
+                cursor: pointer;
+            }
+
+            .active {
+                background-color: rgba(99, 109, 120, 0.7);
+                border-radius: 10px;
+            }
         }
     }
 
@@ -111,6 +133,7 @@ export default {
             clip-path: circle();
             font-size: 20px;
             font-weight: bold;
+            cursor: pointer;
 
         }
 

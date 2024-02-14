@@ -46,6 +46,7 @@ h2 {
     font-weight: bold;
 }
 
+
 .row-container {
     position: relative;
     margin-top: 1em;
@@ -55,7 +56,8 @@ h2 {
         width: 100%;
         display: flex;
         gap: 30px;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
         transition: transform 0.5s ease;
 
     }
@@ -64,12 +66,13 @@ h2 {
 
 
 i {
-    font-size: 45px;
+    font-size: 30px;
     color: white;
     position: absolute;
     transform: translateY(-50%);
     top: 50%;
     cursor: pointer;
+    z-index: 2;
 }
 
 i.fa-circle-chevron-right {
