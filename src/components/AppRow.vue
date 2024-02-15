@@ -58,6 +58,7 @@ h2 {
     text-transform: uppercase;
     font-size: 1.5em;
     font-weight: bold;
+    margin-left: 2.5%;
 }
 
 

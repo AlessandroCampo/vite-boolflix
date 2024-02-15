@@ -5,6 +5,9 @@ export const store = reactive({
     searchString: '',
     foundMovies: [{}],
     activeMovie: null,
+    activeMovieDeatils: null,
+    activeMovieCast: null,
+    activeMovieDirectors: [],
     bgUrl: '',
     page: 'Home',
     loading: false,
@@ -18,7 +21,6 @@ export const store = reactive({
         axios.get(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${this.apiKey}`).then((res) => {
             res.data.results.forEach(res => {
                 if (res.type === "Teaser" && res.official && res.site === "YouTube") {
-                    console.log(res)
                     this.previewID = res.key
                     return
                 }
@@ -28,6 +30,32 @@ export const store = reactive({
             }
 
         });
+    },
+    getDetails(id, media_type) {
+        if (media_type !== "tv") {
+            media_type = "movie"
+        }
+        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${this.apiKey}`).then((res) => {
+            console.log(res.data)
+            this.activeMovieDeatils = res.data
+        })
+    },
+    getCast(id, media_type) {
+        if (media_type !== "tv") {
+            media_type = "movie"
+        }
+        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/credits?api_key=${this.apiKey}`).then((res) => {
+            this.activeMovieCast = res.data.cast.slice(0, 5)
+            this.activeMovieDirectors = []
+            res.data.crew.forEach((member) => {
+                if (member.job === "Director") {
+                    this.activeMovieDirectors.push(member)
+                }
+            })
+
+            console.log(this.activeMovieDirectors)
+
+        })
     },
     roundHalveNumber(number) {
         let integerPart = Math.floor(number.toFixed(1));
@@ -40,5 +68,16 @@ export const store = reactive({
         } else {
             return Math.round(number) / 2;
         }
+    },
+    updateStars() {
+        store.starsNumber = 0
+        store.starsHalf = 0
+        store.emptyStars = 0
+        store.starsNumber = store.roundHalveNumber(store.activeMovie.vote_average)
+        if (store.starsNumber % 1 !== 0) {
+            store.starsNumber -= 0.5;
+            store.starsHalf = 1;
+        }
+        store.emptyStars = 5 - store.starsNumber - store.starsHalf
     }
 })

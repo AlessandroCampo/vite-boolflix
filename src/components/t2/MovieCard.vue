@@ -28,19 +28,13 @@ export default {
     },
     methods: {
         updateActive(movie) {
-            store.starsNumber = 0
-            store.starsHalf = 0
-            store.emptyStars = 0
             store.activeMovie = movie
-            store.starsNumber = store.roundHalveNumber(store.activeMovie.vote_average)
-            if (store.starsNumber % 1 !== 0) {
-                store.starsNumber -= 0.5;
-                store.starsHalf = 1;
-            }
+            store.updateStars()
 
-            store.emptyStars = 5 - store.starsNumber - store.starsHalf
             console.log(store.starsNumber, store.starsHalf, store.emptyStars)
             store.getTrailer(store.activeMovie.id)
+            store.getDetails(store.activeMovie.id, store.activeMovie.media_type)
+            store.getCast(store.activeMovie.id, store.activeMovie.media_type)
         }
     }
 }
