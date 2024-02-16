@@ -18,9 +18,11 @@
                 </div>
             </div>
             <div>
-                <p v-if="store.activeMovieDeatils.release_date">
-                    {{ store.activeMovieDeatils.release_date.split("-")[0] }}
-                    {{ convertDuration(store.activeMovieDeatils.runtime) }}
+                <p>
+                    {{ store.activeMovieDeatils.release_date ? store.activeMovieDeatils.release_date.split("-")[0] :
+                        store.activeMovie.first_air_date.split("-")[0] }}
+                    {{ store.activeMovieDeatils.runtime ? convertDuration(store.activeMovieDeatils.runtime) :
+                        `${store.activeMovieDeatils.number_of_seasons} seasons (${store.activeMovieDeatils.status})` }}
                 </p>
 
 
@@ -43,7 +45,20 @@
                     {{ index !== store.activeMovieDirectors.length - 1 ? dir.name + "," + " " :
                         dir.name }}
                 </span>
+                <span v-for="(dir, index) in store.activeMovieDeatils.created_by" :key=index>
+                    {{ index !== store.activeMovieDeatils.created_by.length - 1 ? dir.name + "," + " " :
+                        dir.name }}
+                </span>
             </p>
+
+            <p class="actorList">
+                <strong> Genres: </strong>
+                <span v-for="(id, index) in store.activeMovie.genre_ids" :key=index>
+                    {{ index !== store.activeMovie.genre_ids.length - 1 ? convertGenreId(id) + "," + " " :
+                        convertGenreId(id) }}
+                </span>
+            </p>
+
 
 
             <button @click="() => { trailerWatch = !trailerWatch }">
@@ -90,6 +105,16 @@ export default {
             var hours = Math.floor(minutes / 60);
             var remainingMinutes = minutes % 60;
             return hours + "h " + remainingMinutes + "m";
+        },
+        convertGenreId(id) {
+            let genreName = ''
+            store.allGenres.forEach((genre) => {
+                if (genre.id === id) {
+                    genreName = genre.name
+                    console.log(genre.name)
+                }
+            })
+            return genreName
         }
 
     },

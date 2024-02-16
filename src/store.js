@@ -12,13 +12,18 @@ export const store = reactive({
     page: 'Home',
     loading: false,
     apiKey: import.meta.env.API_KEY,
+    allGenres: [],
+    genreFilter: 0,
     previewID: '',
     starsNumber: 0,
     starsHalf: 0,
     emptyStars: 0,
-    getTrailer(id) {
+    getTrailer(id, media_type) {
+        if (media_type !== "tv") {
+            media_type = "movie"
+        }
         this.previewID = ''
-        axios.get(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${this.apiKey}`).then((res) => {
+        axios.get(`https://api.themoviedb.org/3//${media_type}/${id}/videos?api_key=${this.apiKey}&language=en-US`).then((res) => {
             res.data.results.forEach(res => {
                 if (res.type === "Teaser" && res.official && res.site === "YouTube") {
                     this.previewID = res.key
@@ -36,7 +41,6 @@ export const store = reactive({
             media_type = "movie"
         }
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${this.apiKey}`).then((res) => {
-            console.log(res.data)
             this.activeMovieDeatils = res.data
         })
     },
@@ -53,7 +57,23 @@ export const store = reactive({
                 }
             })
 
-            console.log(this.activeMovieDirectors)
+        })
+    },
+    getGenre(media_type) {
+        if (media_type !== "tv") {
+            media_type = "movie"
+        }
+        axios.get(`https://api.themoviedb.org/3/genre/${media_type}/list?language=en&api_key=${this.apiKey}`).then((res) => {
+
+            res.data.genres.forEach((genre) => {
+                this.allGenres.push(genre)
+            })
+        })
+        axios.get(`https://api.themoviedb.org/3/genre/tv/list?language=en&api_key=${this.apiKey}`).then((res) => {
+
+            res.data.genres.forEach((genre) => {
+                this.allGenres.push(genre)
+            })
 
         })
     },

@@ -32,7 +32,7 @@ export default {
             store.updateStars()
 
             console.log(store.starsNumber, store.starsHalf, store.emptyStars)
-            store.getTrailer(store.activeMovie.id)
+            store.getTrailer(store.activeMovie.id, store.activeMovie.media_type)
             store.getDetails(store.activeMovie.id, store.activeMovie.media_type)
             store.getCast(store.activeMovie.id, store.activeMovie.media_type)
         }

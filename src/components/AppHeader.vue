@@ -9,6 +9,14 @@
                 <li class="active" @click="changePage('Home', $event)"> Home </li>
                 <li @click="changePage('Series', $event)"> Series </li>
                 <li @click="changePage('Movies', $event)"> Movies </li>
+                <li>
+                    <select v-model="store.genreFilter">
+                        <option value=" 0" selected> Any genre </option>
+                        <option :value="genre.id" v-for="(genre, index) in store.allGenres" :key="index">
+                            {{ genre.name }}
+                        </option>
+                    </select>
+                </li>
             </ul>
         </nav>
 
@@ -51,7 +59,7 @@ export default {
                 store.foundMovies.sort((a, b) => b.vote_count - a.vote_count)
                 console.log(store.foundMovies)
                 store.activeMovie = store.foundMovies[0]
-                store.getTrailer(store.activeMovie.id)
+                store.getTrailer(store.activeMovie.id, store.activeMovie.media_type)
                 store.getDetails(store.activeMovie.id, store.activeMovie.media_type)
                 store.getCast(store.activeMovie.id, store.activeMovie.media_type)
                 store.updateStars()
@@ -103,6 +111,18 @@ export default {
             li {
                 padding: 12px;
                 cursor: pointer;
+
+                select {
+                    background-color: transparent;
+                    border: 1px solid white;
+                    border-radius: 10px;
+
+                    option {
+                        background-color: rgba(16, 27, 38, 0.6);
+                        margin-right: auto;
+                        text-align: center;
+                    }
+                }
             }
 
             .active {
