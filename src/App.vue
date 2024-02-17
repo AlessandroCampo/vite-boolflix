@@ -198,6 +198,8 @@ export default {
 
     <AppRow rowTitle="your research" :research="searchBool" :moviesArray="store.foundMovies"
       v-if="store.foundMovies.length > 1" />
+    <AppRow :rowTitle="`If you liked ${store.activeMovie.name || store.activeMovie.title}`"
+      :moviesArray="store.activeMovieRec" v-if="store.activeMovieRec.length > 0" />
     <AppRow rowTitle="Trending on Boolflix" :moviesArray="trendingAll"
       v-if="store.page === 'Home' && store.genreFilter == 0" />
     <AppRow rowTitle="Most popular on Boolflix" :moviesArray="popularAll"
@@ -226,6 +228,7 @@ export default {
       v-if="store.page === 'Personal' && store.watchList.length > 0" />
     <AppRow :rowTitle="`Favourites`" :moviesArray="store.favList"
       v-if="store.page === 'Personal' && store.favList.length > 0" />
+
     <h1 class="text-center text-4xl mt-12" v-if="store.favList.length == 0 && store.watchList.length == 0"> START FILLING
       YOUR WATCHLIST AND FAVLIST </h1>
 

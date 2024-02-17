@@ -10,6 +10,7 @@ export const store = reactive({
     activeMovieDirectors: [],
     activeMovieLogo: '',
     activeMovieProvidersLogos: [],
+    activeMovieRec: [],
     watchList: JSON.parse(localStorage.getItem('watchlist')) || [],
     favList: JSON.parse(localStorage.getItem('favlist')) || [],
     bgUrl: '',
@@ -155,6 +156,21 @@ export const store = reactive({
         this.activeMovieProvidersLogos = this.activeMovieProvidersLogos.slice(0, 4)
         console.log("providerlist", this.activeMovieProvidersLogos)
     },
+    getRec(id, media_type) {
+        this.activeMovieRec = []
+        if (media_type !== "tv") {
+            media_type = "movie"
+        }
+        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/recommendations?api_key=${this.apiKey}`).then((res) => {
+
+            res.data.results.forEach((rec) => {
+                this.activeMovieRec.push(rec)
+            })
+            console.log("papero", this.activeMovieRec)
+        })
+
+    },
+
     roundHalveNumber(number) {
         let integerPart = Math.floor(number.toFixed(1));
         let decimalPart = number - integerPart;

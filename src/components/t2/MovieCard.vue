@@ -30,12 +30,14 @@ export default {
     methods: {
         updateActive(movie) {
             store.activeMovie = movie
+            store.foundMovies = []
             store.updateStars()
             store.getTrailer(store.activeMovie.id, store.activeMovie.media_type)
             store.getDetails(store.activeMovie.id, store.activeMovie.media_type)
             store.getCast(store.activeMovie.id, store.activeMovie.media_type)
             store.getImages(store.activeMovie.id, store.activeMovie.media_type)
             store.getProviders(store.activeMovie.id, store.activeMovie.media_type)
+            store.getRec(store.activeMovie.id, store.activeMovie.media_type)
         }
     }
 }
