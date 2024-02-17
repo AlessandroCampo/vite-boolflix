@@ -10,6 +10,8 @@ export const store = reactive({
     activeMovieDirectors: [],
     activeMovieLogo: '',
     activeMovieProvidersLogos: [],
+    watchList: JSON.parse(localStorage.getItem('watchlist')) || [],
+    favList: JSON.parse(localStorage.getItem('favlist')) || [],
     bgUrl: '',
     page: 'Home',
     loading: false,
@@ -61,7 +63,7 @@ export const store = reactive({
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/images?api_key=${this.apiKey}`).then((res) => {
 
             res.data.logos.forEach((logo) => {
-                if (logo.iso_639_1 === "en" && logo.height < 450) {
+                if (logo.iso_639_1 === "en" && logo.height < 520) {
                     this.activeMovieLogo = logo.file_path
                     return
                 }
@@ -141,8 +143,7 @@ export const store = reactive({
         }
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/watch/providers?api_key=${this.apiKey}`).then((res) => {
 
-            console.log(res.data.results.IT.flatrate)
-            res.data.results.IT.flatrate.forEach((prov) => {
+            res.data.results.IT?.flatrate.forEach((prov) => {
                 if (this.activeMovieProvidersLogos.length < 4) {
                     this.activeMovieProvidersLogos.push(prov.logo_path)
                 }
@@ -175,5 +176,9 @@ export const store = reactive({
             store.starsHalf = 1;
         }
         store.emptyStars = 5 - store.starsNumber - store.starsHalf
+    },
+    deepClone(obj) {
+        return JSON.parse(JSON.stringify(obj));
     }
+
 })

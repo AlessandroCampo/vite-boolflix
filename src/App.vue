@@ -195,6 +195,7 @@ export default {
     <AppPreview />
   </section>
   <section class="rows-cont">
+
     <AppRow rowTitle="your research" :research="searchBool" :moviesArray="store.foundMovies"
       v-if="store.foundMovies.length > 1" />
     <AppRow rowTitle="Trending on Boolflix" :moviesArray="trendingAll"
@@ -221,6 +222,9 @@ export default {
       v-if="store.genreFilter != 0" />
     <AppRow :rowTitle="`Top Rated ${getGenreName(store.genreFilter)}`" :moviesArray="filteredTopRated"
       v-if="store.genreFilter != 0" />
+    <AppRow :rowTitle="`Watchlist`" :moviesArray="store.watchList" v-if="store.page === 'Personal'" />
+    <AppRow :rowTitle="`Favourites`" :moviesArray="store.favList" v-if="store.page === 'Personal'" />
+
 
 
 

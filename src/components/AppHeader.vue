@@ -9,7 +9,7 @@
                 <li class="active" @click="changePage('Home', $event)"> Home </li>
                 <li @click="changePage('Series', $event)"> Series </li>
                 <li @click="changePage('Movies', $event)"> Movies </li>
-                <li>
+                <li v-show="store.page !== 'Personal'">
                     <select v-model="store.genreFilter">
                         <option value=" 0" selected> Any genre </option>
                         <option :value="genre.id" v-for="(genre, index) in store.optimizedGenres" :key="index">
@@ -30,8 +30,10 @@
                 </button>
                 <input type="text" v-model="store.searchString" @keyup.enter="getMovies()">
             </div>
-            <div class="account">
-                A
+            <div class="account" @click="changePage('Personal', $event)"
+                :style="{ backgroundImage: `url(${profilePicURL})` }">
+
+
             </div>
         </div>
 
@@ -47,7 +49,8 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            store
+            store,
+            profilePicURL: '/src/assets/img/propic.png'
         }
     },
     methods: {
@@ -149,16 +152,19 @@ export default {
         .account {
             background-color: white;
             color: #1a2430;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            clip-path: circle();
+            border-radius: 100%;
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid white;
 
         }
 

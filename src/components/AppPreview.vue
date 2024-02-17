@@ -26,9 +26,9 @@
                 </span>
             </div>
             <div>
-                <p>
+                <p class="num_info">
                     {{ store.activeMovieDeatils?.release_date ? store.activeMovieDeatils.release_date.split("-")[0] :
-                        store.activeMovie.first_air_date.split("-")[0] }}
+                        store.activeMovie.first_air_date.split("-")[0] }} |
                     {{ store.activeMovieDeatils.runtime ? convertDuration(store.activeMovieDeatils.runtime) :
                         `${store.activeMovieDeatils.number_of_seasons} seasons (${store.activeMovieDeatils.status})` }}
                 </p>
@@ -40,41 +40,54 @@
                 {{ store.activeMovie.overview }}
             </p>
 
-            <p class="actorList">
-                <strong> Cast: </strong>
-                <span v-for="(actor, index) in store.activeMovieCast" :key=index>
-                    {{ index !== store.activeMovieCast.length - 1 ? actor.name + "," + " " :
-                        actor.name }}
-                </span>
-            </p>
+            <div class="additiona_info">
+                <p class="actorList">
+                    <strong> Cast: </strong>
+                    <span v-for="(actor, index) in store.activeMovieCast" :key=index>
+                        {{ index !== store.activeMovieCast.length - 1 ? actor.name + "," + " " :
+                            actor.name }}
+                    </span>
+                </p>
 
-            <p class="actorList">
-                <strong> Directors: </strong>
-                <!-- <span v-for="(dir, index) in store.activeMovieDeatils.created_by" :key=index>
+                <p class="actorList">
+                    <strong> Directors: </strong>
+                    <!-- <span v-for="(dir, index) in store.activeMovieDeatils.created_by" :key=index>
                     {{ index !== store.activeMovieDeatils.created_by.length - 1 ? dir.name + "," + " " :
                         dir.name }}
                 </span> -->
-                <span v-for="(dir, index) in store.activeMovieDirectors" :key=index>
-                    {{ index !== store.activeMovieDirectors.length - 1 ? dir.name + "," + " " :
-                        dir.name }}
-                </span>
+                    <span v-for="(dir, index) in store.activeMovieDirectors" :key=index>
+                        {{ index !== store.activeMovieDirectors.length - 1 ? dir.name + "," + " " :
+                            dir.name }}
+                    </span>
 
-            </p>
+                </p>
 
-            <p class="actorList">
-                <strong> Genres: </strong>
-                <span v-for="(id, index) in store.activeMovie.genre_ids" :key=index>
-                    {{ index !== store.activeMovie.genre_ids.length - 1 ? convertGenreId(id) + "," + " " :
-                        convertGenreId(id) }}
-                </span>
-            </p>
+                <p class="actorList">
+                    <strong> Genres: </strong>
+                    <span v-for="(id, index) in store.activeMovie.genre_ids" :key=index>
+                        {{ index !== store.activeMovie.genre_ids.length - 1 ? convertGenreId(id) + "," + " " :
+                            convertGenreId(id) }}
+                    </span>
+                </p>
+            </div>
 
 
 
-            <button @click="() => { trailerWatch = !trailerWatch }">
-                <i :class="!trailerWatch ? 'fa-solid fa-play' : 'fa-solid fa-xmark'"></i>
-                {{ !trailerWatch ? 'watch trailer' : 'close trailer' }}
-            </button>
+
+            <div class="buttons">
+                <button @click="() => { trailerWatch = !trailerWatch }">
+                    <i :class="!trailerWatch ? 'fa-solid fa-play' : 'fa-solid fa-xmark'"></i>
+                    {{ !trailerWatch ? 'watch trailer' : 'close trailer' }}
+                </button>
+                <i class="fa-solid"
+                    :class="{ 'fa-eye-slash': !isMovieInWatchlist, 'fa-eye': isMovieInWatchlist, 'text-white': !isMovieInWatchlist, 'text-red-600': isMovieInWatchlist }"
+                    @click="addToWatchlist"></i>
+                <i class="fa-solid"
+                    :class="{ 'fa-heart-circle-minus': !isMovieInFavlist, 'fa-heart-circle-check': isMovieInFavlist, 'text-white': !isMovieInFavlist, 'text-red-600': isMovieInFavlist }"
+                    @click="addToFavlist"></i>
+
+            </div>
+
         </div>
         <iframe width="100%" height="100%" :src="`https://www.youtube.com/embed/${store.previewID}?autoplay=1`"
             v-if="trailerWatch">
@@ -93,11 +106,13 @@
 
 <script>
 import { store } from "../store"
+import axios from 'axios'
 export default {
     data() {
         return {
             store,
-            trailerWatch: false
+            trailerWatch: false,
+
         }
     },
     methods: {
@@ -126,12 +141,41 @@ export default {
                 }
             })
             return genreName
+        },
+        addToWatchlist() {
+            const existingIndex = store.watchList.findIndex(existingMovie => existingMovie.id === store.activeMovie.id);
+            if (existingIndex === -1) {
+                store.watchList.push(store.deepClone(store.activeMovie));
+            } else {
+                store.watchList.splice(existingIndex, 1);
+            }
+            localStorage.setItem('watchlist', JSON.stringify(store.watchList));
+
+            console.log(store.watchList);
+        },
+        addToFavlist() {
+            const existingIndex = store.favList.findIndex(existingMovie => existingMovie.id === store.activeMovie.id);
+            if (existingIndex === -1) {
+                store.favList.push(store.deepClone(store.activeMovie));
+            } else {
+                store.favList.splice(existingIndex, 1);
+            }
+            localStorage.setItem('favlist', JSON.stringify(store.favList));
+
+            console.log(store.favList);
         }
+
 
     },
     computed: {
-
+        isMovieInWatchlist() {
+            return store.watchList.some(existingMovie => existingMovie.id === store.activeMovie.id);
+        },
+        isMovieInFavlist() {
+            return store.favList.some(existingMovie => existingMovie.id === store.activeMovie.id);
+        }
     }
+
 }
 </script>
 
@@ -144,7 +188,11 @@ figure {
     background-position: 50% 10%;
     position: relative;
 
-
+    .num_info {
+        display: flex;
+        align-items: center;
+        line-height: 15px;
+    }
 
     .movie-info {
         background-color: rgba(0, 0, 0, 0.8);
@@ -154,12 +202,14 @@ figure {
         padding: 30px;
         display: flex;
         flex-direction: column;
-        gap: 0.6em;
+        gap: 0.8em;
         // height: 90%;
         position: absolute;
         left: 5%;
         bottom: 2%;
         overflow: hidden;
+
+
 
         p.description {
             max-height: 35%;
@@ -192,32 +242,44 @@ figure {
 
         .prov-list {
             display: flex;
-            gap: 0.3em;
+            gap: 0.5em;
 
             img {
-                width: 50px;
+                width: 35px;
             }
         }
 
-        button {
-            width: fit-content;
-            background-color: white;
-            color: black;
-            padding-block: 0.5em;
-            padding-inline: 1em;
-            font-weight: bold;
-            text-transform: uppercase;
+        .buttons {
             display: flex;
             align-items: center;
-            gap: 0.8em;
-            font-size: 18px;
-            border-radius: 20px;
-            margin-top: 20px;
+            gap: 1em;
+            margin-top: 10px;
+
+            button {
+                width: fit-content;
+                background-color: white;
+                color: black;
+                padding-block: 0.5em;
+                padding-inline: 1em;
+                font-weight: bold;
+                text-transform: uppercase;
+                display: flex;
+                align-items: center;
+                gap: 0.8em;
+                font-size: 18px;
+                border-radius: 20px;
+
+                i {
+                    font-size: 22px;
+                }
+            }
 
             i {
-                font-size: 22px;
+                font-size: 1.8em;
+                cursor: pointer;
             }
         }
+
     }
 }
 
