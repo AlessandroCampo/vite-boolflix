@@ -52,6 +52,22 @@ export default {
           break;
       }
 
+      switch (genre_id) {
+        case 10759:
+          genre_id = '28%7C10759';
+          break;
+        case 10768:
+          genre_id = '10752%7C10768';
+          break;
+        case 53:
+          genre_id = '53%7C9648';
+          break;
+        case 10765:
+          genre_id = '10765%7C878%7C14'
+          break;
+
+      }
+
       if (media_type !== "multi") {
         axios.get(`https://api.themoviedb.org/3/discover/${media_type}?api_key=${store.apiKey}&with_genres=${genre_id}&sort_by=${query}&page=1&vote_count.gte=150`)
           .then((res) => {

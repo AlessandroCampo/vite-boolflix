@@ -12,7 +12,7 @@
                 <li>
                     <select v-model="store.genreFilter">
                         <option value=" 0" selected> Any genre </option>
-                        <option :value="genre.id" v-for="(genre, index) in store.allGenres" :key="index">
+                        <option :value="genre.id" v-for="(genre, index) in store.optimizedGenres" :key="index">
                             {{ genre.name }}
                         </option>
                     </select>

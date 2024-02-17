@@ -14,6 +14,7 @@ export const store = reactive({
     loading: false,
     apiKey: import.meta.env.API_KEY,
     allGenres: [],
+    optimizedGenres: [],
     genreFilter: 0,
     previewID: '',
     starsNumber: 0,
@@ -103,15 +104,33 @@ export const store = reactive({
 
             res.data.genres.forEach((genre) => {
                 this.allGenres.push(genre)
+                if (genre.name !== "Action" && genre.name !== "War" && genre.name !== "Science Fiction" && genre.name !== "Fantasy" && genre.name !== "Thriller") {
+                    this.optimizedGenres.push(genre)
+                }
+
             })
         })
         axios.get(`https://api.themoviedb.org/3/genre/tv/list?language=en&api_key=${this.apiKey}`).then((res) => {
 
             res.data.genres.forEach((genre) => {
-                this.allGenres.push(genre)
+                this.allGenres.push(genre);
+                if (!this.optimizedGenres.some(existingGenre => existingGenre.id === genre.id)) {
+
+                    this.optimizedGenres.push(genre)
+                }
             })
+            console.log(this.optimizedGenres)
+            this.optimizedGenres.sort((a, b) => {
+                const nameA = a.name.toLowerCase(); // Convert names to lowercase for case-insensitive sorting
+                const nameB = b.name.toLowerCase();
+                if (nameA < nameB) return -1; // Name "a" comes before name "b"
+                if (nameA > nameB) return 1; // Name "a" comes after name "b"
+                return 0; // Names are equal
+            });
 
         })
+
+
     },
     roundHalveNumber(number) {
         let integerPart = Math.floor(number.toFixed(1));
