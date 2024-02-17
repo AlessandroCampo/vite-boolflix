@@ -30,10 +30,10 @@
                 </button>
                 <input type="text" v-model="store.searchString" @keyup.enter="getMovies()">
             </div>
-            <div class="account" @click="changePage('Personal', $event)"
+            <div class="account" @click="changePage('Personal', $event)" @contextmenu="triggerInputFile"
                 :style="{ backgroundImage: `url(${profilePicURL})` }">
 
-
+                <input type="file" @change="onChangeFileUpload" class="hidden" ref="inputFile">
             </div>
         </div>
 
@@ -50,7 +50,7 @@ export default {
     data() {
         return {
             store,
-            profilePicURL: '/src/assets/img/propic.png'
+            profilePicURL: JSON.parse(localStorage.getItem('propic')) || '/src/assets/img/propic.jpg'
         }
     },
     methods: {
@@ -81,6 +81,20 @@ export default {
             store.page = newPage
 
             e.target.classList.add("active")
+        },
+        async onChangeFileUpload(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async () => {
+                this.profilePicURL = reader.result;
+                localStorage.setItem('propic', JSON.stringify(this.profilePicURL));
+            };
+            reader.readAsDataURL(file);
+        },
+        triggerInputFile() {
+
+            this.$refs.inputFile.click();
+
         }
     }
 }
