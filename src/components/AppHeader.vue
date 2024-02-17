@@ -2,13 +2,21 @@
     <div class="header-container">
         <figure>
             <img src="../assets/img/logo.png" alt="">
+            <div class="lang-select">
+                <select v-model="store.lang" @change="changeLang">
+                    <option value="it"> Italiano </option>
+                    <option value="en"> Inglese </option>
+                    <option value="es"> Spagnolo </option>
+                </select>
+                <img :src="store.convertFlag(store.lang)" alt="" style="width: 30px;">
+            </div>
         </figure>
 
         <nav>
             <ul>
-                <li class="active" @click="changePage('Home', $event)"> Home </li>
-                <li @click="changePage('Series', $event)"> Series </li>
-                <li @click="changePage('Movies', $event)"> Movies </li>
+                <li class="active" @click="changePage('Home', $event)"> {{ store.lang == 'en' ? "Home" : "Home" }} </li>
+                <li @click="changePage('Series', $event)"> {{ store.lang == 'en' ? "TV Shows" : "Serie TV" }} </li>
+                <li @click="changePage('Movies', $event)"> {{ store.lang == 'en' ? "Movies" : "Film" }} </li>
                 <li v-show="store.page !== 'Personal'">
                     <select v-model="store.genreFilter">
                         <option value=" 0" selected> Any genre </option>
@@ -95,6 +103,10 @@ export default {
 
             this.$refs.inputFile.click();
 
+        },
+        changeLang() {
+            window.location.reload()
+            localStorage.setItem('lang', store.lang)
         }
     }
 }
@@ -111,10 +123,26 @@ export default {
 
     figure {
         flex-basis: 25%;
+        display: flex;
+        align-items: center;
+        gap: 2em;
 
         img {
             width: 50%;
         }
+
+        .lang-select {
+            display: flex;
+            align-items: center;
+            gap: 0.4em;
+
+            select {
+                background-color: #1a2430;
+                font-size: 1.2em;
+            }
+        }
+
+
     }
 
     nav {
@@ -138,7 +166,8 @@ export default {
                     border-radius: 10px;
 
                     option {
-                        background-color: rgba(16, 27, 38, 0.6);
+                        background-color: #1a2430;
+
                         margin-right: auto;
                         text-align: center;
                     }

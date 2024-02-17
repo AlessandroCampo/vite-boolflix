@@ -11,7 +11,7 @@
                 {{ store.activeMovie.title ? store.activeMovie.title : store.activeMovie.name }}
             </p>
             <div class="flex items-center gap-3">
-                <img :src="convertFlag(store.activeMovie.original_language)" alt="" style="width: 50px;">
+                <img :src="store.convertFlag(store.activeMovie.original_language)" alt="" style="width: 50px;">
                 <div class="review">
                     {{ store.roundHalveNumber(store.activeMovie.vote_average) }}
                     <i class="fa-solid fa-star text-yellow-400" v-for="index in store.starsNumber" :key="index"></i>
@@ -116,16 +116,6 @@ export default {
         }
     },
     methods: {
-        convertFlag(code) {
-            if (code === "en") {
-                code = "us"
-            } else if (code === "ko") {
-                code = "kr"
-            } else if (code === "ja") {
-                code = "jp"
-            }
-            return `https://flagsapi.com/${code.toUpperCase()}/shiny/64.png`
-        },
         convertDuration(minutes) {
             var hours = Math.floor(minutes / 60);
             var remainingMinutes = minutes % 60;

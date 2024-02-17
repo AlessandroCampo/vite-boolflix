@@ -14,6 +14,7 @@ export const store = reactive({
     favList: JSON.parse(localStorage.getItem('favlist')) || [],
     bgUrl: '',
     page: 'Home',
+    lang: localStorage.getItem('lang') || 'it',
     loading: false,
     apiKey: import.meta.env.API_KEY,
     allGenres: [],
@@ -50,7 +51,7 @@ export const store = reactive({
         if (media_type !== "tv") {
             media_type = "movie"
         }
-        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${this.apiKey}`).then((res) => {
+        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${this.apiKey}&language=${store.lang}`).then((res) => {
             this.activeMovieDeatils = res.data
             console.log(this.activeMovieDeatils)
         })
@@ -104,17 +105,17 @@ export const store = reactive({
         if (media_type !== "tv") {
             media_type = "movie"
         }
-        axios.get(`https://api.themoviedb.org/3/genre/${media_type}/list?language=en&api_key=${this.apiKey}`).then((res) => {
+        axios.get(`https://api.themoviedb.org/3/genre/${media_type}/list?language=${store.lang}&api_key=${this.apiKey}`).then((res) => {
 
             res.data.genres.forEach((genre) => {
                 this.allGenres.push(genre)
-                if (genre.name !== "Action" && genre.name !== "War" && genre.name !== "Science Fiction" && genre.name !== "Fantasy" && genre.name !== "Thriller") {
+                if (genre.id !== 28 && genre.id !== 10752 && genre.id !== 878 && genre.name !== "Fantasy" && genre.id !== 53) {
                     this.optimizedGenres.push(genre)
                 }
 
             })
         })
-        axios.get(`https://api.themoviedb.org/3/genre/tv/list?language=en&api_key=${this.apiKey}`).then((res) => {
+        axios.get(`https://api.themoviedb.org/3/genre/tv/list?language=${store.lang}&api_key=${this.apiKey}`).then((res) => {
 
             res.data.genres.forEach((genre) => {
                 this.allGenres.push(genre);
@@ -179,6 +180,16 @@ export const store = reactive({
     },
     deepClone(obj) {
         return JSON.parse(JSON.stringify(obj));
+    },
+    convertFlag(code) {
+        if (code === "en") {
+            code = "us"
+        } else if (code === "ko") {
+            code = "kr"
+        } else if (code === "ja") {
+            code = "jp"
+        }
+        return `https://flagsapi.com/${code.toUpperCase()}/shiny/64.png`
     }
 
 })
