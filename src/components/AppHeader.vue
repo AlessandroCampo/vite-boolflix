@@ -62,6 +62,7 @@ export default {
                 store.getTrailer(store.activeMovie.id, store.activeMovie.media_type)
                 store.getDetails(store.activeMovie.id, store.activeMovie.media_type)
                 store.getCast(store.activeMovie.id, store.activeMovie.media_type)
+                store.getImages(store.activeMovie.id, store.activeMovie.media_type)
                 store.updateStars()
             });
 

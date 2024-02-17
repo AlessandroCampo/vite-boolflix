@@ -77,46 +77,64 @@ export default {
   },
   created() {
     store.getGenre("movie")
+    window.addEventListener("scroll", () => {
+      const header = document.querySelector("header");
+      if (window.scrollY === 0) {
+        header.style.backgroundColor = "rgba(16, 27, 38, 0.6)";
+      } else {
+        header.style.backgroundColor = "rgba(16, 27, 38, 1)";
+      }
+    });
 
     axios.get(`https://api.themoviedb.org/3/trending/all/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc`).then((res) => {
+      console.log(res.data.results)
       this.trendingAll = res.data.results
     });
-    axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${store.apiKey}&page=1&`).then((res) => {
+    axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150`).then((res) => {
 
       for (let i = 0;i < 10;i++) {
+        res.data.results[i].media_type = "movie"
         this.popularAll.push(res.data.results[i])
       }
       for (let i = 0;i < 20;i++) {
+        res.data.results[i].media_type = "movie"
         this.popularMovies.push(res.data.results[i])
       }
 
     })
-    axios.get(`https://api.themoviedb.org/3/tv/popular?api_key=${store.apiKey}&page=2&`).then((res) => {
+    axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150`).then((res) => {
+      console.log(res.data.results)
       for (let i = 0;i < 10;i++) {
+        res.data.results[i].media_type = "tv"
         this.popularAll.push(res.data.results[i])
       }
       for (let i = 0;i < 20;i++) {
+        res.data.results[i].media_type = "tv"
         this.popularShows.push(res.data.results[i])
       }
-      this.popularAll.sort((a, b) => b.popularity - a.popularity)
+      this.popularAll.sort((a, b) => b.vote_average - a.vote_average)
     })
-    axios.get(`https://api.themoviedb.org/3/movie/top_rated?api_key=${store.apiKey}&page=1&`).then((res) => {
+    axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&sort_by=vote_average.desc&page=1&vote_count.gte=350`).then((res) => {
       for (let i = 0;i < 10;i++) {
+        res.data.results[i].media_type = "movie"
         this.topRatedAll.push(res.data.results[i])
       }
 
       for (let i = 0;i < 20;i++) {
+        res.data.results[i].media_type = "movie"
         this.topRatedMovies.push(res.data.results[i])
       }
     })
-    axios.get(`https://api.themoviedb.org/3/tv/top_rated?api_key=${store.apiKey}&page=2&`).then((res) => {
+    axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${store.apiKey}&sort_by=vote_average.desc&page=1&vote_count.gte=350`).then((res) => {
       for (let i = 0;i < 10;i++) {
+        res.data.results[i].media_type = "tv"
         this.topRatedAll.push(res.data.results[i])
       }
       for (let i = 0;i < 20;i++) {
+        res.data.results[i].media_type = "tv"
         this.topRatedShows.push(res.data.results[i])
       }
-      this.topRatedAll.sort((a, b) => b.popularity - a.popularity)
+      this.topRatedAll.sort((a, b) => b.vote_average - a.vote_average)
     })
     axios.get(`https://api.themoviedb.org/3/trending/movie/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc`).then((res) => {
       this.trendingMovies = res.data.results

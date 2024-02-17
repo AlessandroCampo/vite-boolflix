@@ -2,7 +2,11 @@
     <figure :style="{ backgroundImage: `url('https://image.tmdb.org/t/p/original/${store.activeMovie.backdrop_path}')` }"
         v-if="store.activeMovie">
         <div class="movie-info">
-            <p class="title">
+
+            <img :src="`https://image.tmdb.org/t/p/original/${store.activeMovieLogo}`" alt="" class="movie_logo mb-4"
+                style="width: 420px; max-height:200px;" v-if="store.activeMovieLogo">
+
+            <p class="title" v-else>
                 {{ store.activeMovie.title ? store.activeMovie.title : store.activeMovie.name }}
             </p>
             <div class="flex items-center gap-3">
@@ -19,7 +23,7 @@
             </div>
             <div>
                 <p>
-                    {{ store.activeMovieDeatils.release_date ? store.activeMovieDeatils.release_date.split("-")[0] :
+                    {{ store.activeMovieDeatils?.release_date ? store.activeMovieDeatils.release_date.split("-")[0] :
                         store.activeMovie.first_air_date.split("-")[0] }}
                     {{ store.activeMovieDeatils.runtime ? convertDuration(store.activeMovieDeatils.runtime) :
                         `${store.activeMovieDeatils.number_of_seasons} seasons (${store.activeMovieDeatils.status})` }}
@@ -41,14 +45,15 @@
 
             <p class="actorList">
                 <strong> Directors: </strong>
-                <span v-for="(dir, index) in store.activeMovieDirectors" :key=index>
-                    {{ index !== store.activeMovieDirectors.length - 1 ? dir.name + "," + " " :
-                        dir.name }}
-                </span>
                 <span v-for="(dir, index) in store.activeMovieDeatils.created_by" :key=index>
                     {{ index !== store.activeMovieDeatils.created_by.length - 1 ? dir.name + "," + " " :
                         dir.name }}
                 </span>
+                <span v-for="(dir, index) in store.activeMovieDirectors" :key=index>
+                    {{ index !== store.activeMovieDirectors.length - 1 ? dir.name + "," + " " :
+                        dir.name }}
+                </span>
+
             </p>
 
             <p class="actorList">
@@ -133,6 +138,8 @@ figure {
     background-position: 50% 10%;
     position: relative;
 
+
+
     .movie-info {
         background-color: rgba(0, 0, 0, 0.8);
         color: white;
@@ -141,12 +148,18 @@ figure {
         padding: 30px;
         display: flex;
         flex-direction: column;
-        gap: 1em;
-        max-height: 80%;
+        gap: 0.6em;
+        height: 80%;
         position: absolute;
         left: 5%;
         bottom: 5%;
         overflow: hidden;
+
+        p.description {
+            max-height: 35%;
+            overflow: auto;
+            font-size: 0.8em;
+        }
 
         .title {
             text-transform: uppercase;
@@ -184,6 +197,7 @@ figure {
             gap: 0.8em;
             font-size: 18px;
             border-radius: 20px;
+            margin-top: 20px;
 
             i {
                 font-size: 22px;

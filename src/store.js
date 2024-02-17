@@ -8,6 +8,7 @@ export const store = reactive({
     activeMovieDeatils: null,
     activeMovieCast: null,
     activeMovieDirectors: [],
+    activeMovieLogo: '',
     bgUrl: '',
     page: 'Home',
     loading: false,
@@ -19,13 +20,15 @@ export const store = reactive({
     starsHalf: 0,
     emptyStars: 0,
     getTrailer(id, media_type) {
+        console.log(id)
         if (media_type !== "tv") {
             media_type = "movie"
         }
         this.previewID = ''
         axios.get(`https://api.themoviedb.org/3//${media_type}/${id}/videos?api_key=${this.apiKey}&language=en-US`).then((res) => {
+
             res.data.results.forEach(res => {
-                if (res.type === "Teaser" && res.official && res.site === "YouTube") {
+                if ((res.name === "Official Trailer") || (res.type === "Trailer" && res.official && res.site === "YouTube")) {
                     this.previewID = res.key
                     return
                 }
@@ -44,6 +47,24 @@ export const store = reactive({
             this.activeMovieDeatils = res.data
         })
     },
+    getImages(id, media_type) {
+        if (media_type !== "tv") {
+            media_type = "movie"
+        }
+        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/images?api_key=${this.apiKey}`).then((res) => {
+            console.log(res.data.logos)
+            res.data.logos.forEach((logo) => {
+                if (logo.iso_639_1 === "en" && logo.height < 500) {
+                    this.activeMovieLogo = logo.file_path
+                    return
+                }
+            })
+            if (!this.activeMovieLogo) {
+                this.activeMovieLogo = res.data.logos[0].file_path
+            }
+
+        })
+    },
     getCast(id, media_type) {
         if (media_type !== "tv") {
             media_type = "movie"
@@ -51,8 +72,11 @@ export const store = reactive({
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/credits?api_key=${this.apiKey}`).then((res) => {
             this.activeMovieCast = res.data.cast.slice(0, 5)
             this.activeMovieDirectors = []
+            console.log(res.data)
             res.data.crew.forEach((member) => {
                 if (member.job === "Director") {
+                    this.activeMovieDirectors.push(member)
+                } else if (member.department === "Writing") {
                     this.activeMovieDirectors.push(member)
                 }
             })
