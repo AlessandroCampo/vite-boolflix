@@ -1,7 +1,8 @@
 <template>
     <div class="card" @click="updateActive(movie)">
         <figure>
-            <img :src="`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`" alt="">
+            <img :src="movie.backdrop_path ? `https://image.tmdb.org/t/p/original/${movie.backdrop_path}` : 'https://www.desktopbackground.org/p/2010/09/05/75431_movies-generic-film-home-theater-backdrops-wallpapers_1920x1080_h.jpg'"
+                alt="">
             <p> {{ movie.title ? movie.title : movie.name }} </p>
             <div class="card-hover">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white">

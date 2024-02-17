@@ -1,6 +1,7 @@
 <template>
-    <figure :style="{ backgroundImage: `url('https://image.tmdb.org/t/p/original/${store.activeMovie.backdrop_path}')` }"
-        v-if="store.activeMovie">
+    <figure v-if="store.activeMovie" :style="{
+        backgroundImage: `url('${store.activeMovie.backdrop_path ? 'https://image.tmdb.org/t/p/original/' + store.activeMovie.backdrop_path : 'https://www.desktopbackground.org/p/2010/09/05/75431_movies-generic-film-home-theater-backdrops-wallpapers_1920x1080_h.jpg'}')`
+    }">
         <div class="movie-info">
 
             <img :src="`https://image.tmdb.org/t/p/original/${store.activeMovieLogo}`" alt="" class="movie_logo mb-4"
