@@ -1,12 +1,12 @@
 <template>
     <div class="header-container">
         <figure>
-            <img src="../assets/img/logo.png" alt="">
+            <img src="../assets/img/logo-small.png" alt="">
             <div class="lang-select">
                 <select v-model="store.lang" @change="changeLang">
                     <option value="it"> Italiano </option>
-                    <option value="en"> Inglese </option>
-                    <option value="es"> Spagnolo </option>
+                    <option value="en"> English </option>
+                    <option value="es"> Español </option>
                 </select>
                 <img :src="store.convertFlag(store.lang)" alt="" style="width: 30px;">
             </div>
@@ -128,7 +128,7 @@ export default {
         gap: 2em;
 
         img {
-            width: 50%;
+            width: 25%;
         }
 
         .lang-select {

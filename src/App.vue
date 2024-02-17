@@ -222,8 +222,12 @@ export default {
       v-if="store.genreFilter != 0" />
     <AppRow :rowTitle="`Top Rated ${getGenreName(store.genreFilter)}`" :moviesArray="filteredTopRated"
       v-if="store.genreFilter != 0" />
-    <AppRow :rowTitle="`Watchlist`" :moviesArray="store.watchList" v-if="store.page === 'Personal'" />
-    <AppRow :rowTitle="`Favourites`" :moviesArray="store.favList" v-if="store.page === 'Personal'" />
+    <AppRow :rowTitle="`Watchlist`" :moviesArray="store.watchList"
+      v-if="store.page === 'Personal' && store.watchList.length > 0" />
+    <AppRow :rowTitle="`Favourites`" :moviesArray="store.favList"
+      v-if="store.page === 'Personal' && store.favList.length > 0" />
+    <h1 class="text-center text-4xl mt-12" v-if="store.favList.length == 0 && store.watchList.length == 0"> START FILLING
+      YOUR WATCHLIST AND FAVLIST </h1>
 
 
 

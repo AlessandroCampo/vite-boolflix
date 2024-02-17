@@ -24,6 +24,7 @@
                     <img :src="`https://image.tmdb.org/t/p/original/${logo}`" alt=""
                         v-for="(logo, index) in store.activeMovieProvidersLogos" :key="index">
                 </span>
+                <span v-else class="prov-list"> <img src="../assets/img/pirate_logo.jpg" alt=""></span>
             </div>
             <div>
                 <p class="num_info">
@@ -90,7 +91,7 @@
 
         </div>
         <iframe width="100%" height="100%" :src="`https://www.youtube.com/embed/${store.previewID}?autoplay=1`"
-            v-if="trailerWatch">
+            v-if="trailerWatch" allowfullscreen>
         </iframe>
 
 
@@ -99,7 +100,11 @@
     </figure>
     <figure id="homeBG" v-else>
         <div>
-            Find and watch awesome movies & TV shows ('s trailers :\')
+            <p>
+                Stop wasting time watching terrible stuff
+            </p>
+
+            <img src="../assets/img/logo.png" alt="" style="width: 70%;">
         </div>
     </figure>
 </template>
@@ -178,6 +183,7 @@ figure {
     background-position: 50% 10%;
     position: relative;
 
+
     .num_info {
         display: flex;
         align-items: center;
@@ -195,8 +201,9 @@ figure {
         gap: 0.8em;
         // height: 90%;
         position: absolute;
-        left: 5%;
-        bottom: 2%;
+        left: 8%;
+        bottom: 50%;
+        transform: translateY(50%);
         overflow: hidden;
 
 
@@ -285,6 +292,10 @@ figure#homeBG {
         color: white;
         width: fit-content;
         padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5em;
     }
 
 }
