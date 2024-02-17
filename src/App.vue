@@ -93,6 +93,7 @@ export default {
   },
   created() {
     store.getGenre("movie")
+    console.log(store.allGenres)
     window.addEventListener("scroll", () => {
       const header = document.querySelector("header");
       if (window.scrollY === 0) {
@@ -103,7 +104,7 @@ export default {
     });
 
     axios.get(`https://api.themoviedb.org/3/trending/all/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc`).then((res) => {
-      console.log(res.data.results)
+
       this.trendingAll = res.data.results
     });
     axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150`).then((res) => {
@@ -119,7 +120,7 @@ export default {
 
     })
     axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150`).then((res) => {
-      console.log(res.data.results)
+
       for (let i = 0;i < 10;i++) {
         res.data.results[i].media_type = "tv"
         this.popularAll.push(res.data.results[i])
@@ -164,7 +165,7 @@ export default {
     'store.genreFilter': {
       handler(newGenreFilter, oldGenreFilter) {
         if (newGenreFilter !== oldGenreFilter) {
-          console.log("Genre filter changed");
+
           this.updateFilteredResults();
         }
       },
@@ -188,7 +189,7 @@ export default {
 <template
 >
   <header>
-    <AppHeader @genreChange="getEverything" />
+    <AppHeader />
   </header>
   <section>
     <AppPreview />

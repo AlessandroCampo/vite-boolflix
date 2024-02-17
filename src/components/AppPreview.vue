@@ -19,8 +19,11 @@
                         :key="index"></i>
                     <i class="fa-regular fa-star" v-for="index in store.emptyStars" :key="index"></i>
                     ({{ store.activeMovie.vote_count }})
-
                 </div>
+                <span v-if="store.activeMovieProvidersLogos.length > 0" class="prov-list">
+                    <img :src="`https://image.tmdb.org/t/p/original/${logo}`" alt=""
+                        v-for="(logo, index) in store.activeMovieProvidersLogos" :key="index">
+                </span>
             </div>
             <div>
                 <p>
@@ -29,6 +32,7 @@
                     {{ store.activeMovieDeatils.runtime ? convertDuration(store.activeMovieDeatils.runtime) :
                         `${store.activeMovieDeatils.number_of_seasons} seasons (${store.activeMovieDeatils.status})` }}
                 </p>
+
 
 
             </div>
@@ -114,6 +118,7 @@ export default {
         },
         convertGenreId(id) {
             let genreName = ''
+            console.log(store.allGenres)
             store.allGenres.forEach((genre) => {
                 if (genre.id === id) {
                     genreName = genre.name
@@ -132,7 +137,7 @@ export default {
 
 <style lang="scss" scoped>
 figure {
-    height: 80vh;
+    height: 73vh;
     width: 100vw;
     background-size: cover;
     background-repeat: no-repeat;
@@ -150,10 +155,10 @@ figure {
         display: flex;
         flex-direction: column;
         gap: 0.6em;
-        height: 80%;
+        // height: 90%;
         position: absolute;
         left: 5%;
-        bottom: 5%;
+        bottom: 2%;
         overflow: hidden;
 
         p.description {
@@ -182,6 +187,15 @@ figure {
             strong {
                 font-weight: bolder;
                 font-size: 1.1em;
+            }
+        }
+
+        .prov-list {
+            display: flex;
+            gap: 0.3em;
+
+            img {
+                width: 50px;
             }
         }
 

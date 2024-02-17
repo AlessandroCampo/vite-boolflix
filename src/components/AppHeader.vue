@@ -30,9 +30,9 @@
                 </button>
                 <input type="text" v-model="store.searchString" @keyup.enter="getMovies()">
             </div>
-            <dv class="account">
+            <div class="account">
                 A
-            </dv>
+            </div>
         </div>
 
 
@@ -57,12 +57,13 @@ export default {
             axios.get(`https://api.themoviedb.org/3/search/multi?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
                 store.foundMovies = res.data.results
                 store.foundMovies.sort((a, b) => b.vote_count - a.vote_count)
-                console.log(store.foundMovies)
+
                 store.activeMovie = store.foundMovies[0]
                 store.getTrailer(store.activeMovie.id, store.activeMovie.media_type)
                 store.getDetails(store.activeMovie.id, store.activeMovie.media_type)
                 store.getCast(store.activeMovie.id, store.activeMovie.media_type)
                 store.getImages(store.activeMovie.id, store.activeMovie.media_type)
+                store.getProviders(store.activeMovie.id, store.activeMovie.media_type)
                 store.updateStars()
                 store.searchString = ''
             });
@@ -71,11 +72,11 @@ export default {
         changePage(newPage, e) {
             const menuLinks = document.querySelectorAll("header ul li")
             menuLinks.forEach((link) => {
-                console.log("removing")
+
                 link.classList.remove("active")
             })
             store.page = newPage
-            console.log(store.page)
+
             e.target.classList.add("active")
         }
     }

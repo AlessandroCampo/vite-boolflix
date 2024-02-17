@@ -9,6 +9,7 @@ export const store = reactive({
     activeMovieCast: null,
     activeMovieDirectors: [],
     activeMovieLogo: '',
+    activeMovieProvidersLogos: [],
     bgUrl: '',
     page: 'Home',
     loading: false,
@@ -49,6 +50,7 @@ export const store = reactive({
         }
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${this.apiKey}`).then((res) => {
             this.activeMovieDeatils = res.data
+            console.log(this.activeMovieDeatils)
         })
     },
     getImages(id, media_type) {
@@ -57,9 +59,9 @@ export const store = reactive({
             media_type = "movie"
         }
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/images?api_key=${this.apiKey}`).then((res) => {
-            console.log(res.data.logos)
+
             res.data.logos.forEach((logo) => {
-                if (logo.iso_639_1 === "en" && logo.height < 550) {
+                if (logo.iso_639_1 === "en" && logo.height < 450) {
                     this.activeMovieLogo = logo.file_path
                     return
                 }
@@ -77,11 +79,11 @@ export const store = reactive({
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/credits?api_key=${this.apiKey}`).then((res) => {
             this.activeMovieCast = res.data.cast.slice(0, 5)
             this.activeMovieDirectors = []
-            console.log(res.data)
+            console.log(res.data.crew)
             res.data.crew.forEach((member) => {
-                if ((member.job === "Director" || member.department === "Writing") && !this.isDirectorInArray(member.name)) {
+                if ((member.job === "Director" || member.department === "Writing" || member.job === "Executive Producer") && !this.isDirectorInArray(member.name)) {
                     this.activeMovieDirectors.push(member);
-                    console.log(this.activeMovieDirectors);
+
                 }
             });
             this.activeMovieDirectors.sort((a, b) => {
@@ -119,7 +121,7 @@ export const store = reactive({
                     this.optimizedGenres.push(genre)
                 }
             })
-            console.log(this.optimizedGenres)
+
             this.optimizedGenres.sort((a, b) => {
                 const nameA = a.name.toLowerCase(); // Convert names to lowercase for case-insensitive sorting
                 const nameB = b.name.toLowerCase();
@@ -131,6 +133,25 @@ export const store = reactive({
         })
 
 
+    },
+    getProviders(id, media_type) {
+        this.activeMovieProvidersLogos = []
+        if (media_type !== "tv") {
+            media_type = "movie"
+        }
+        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/watch/providers?api_key=${this.apiKey}`).then((res) => {
+
+            console.log(res.data.results.IT.flatrate)
+            res.data.results.IT.flatrate.forEach((prov) => {
+                if (this.activeMovieProvidersLogos.length < 4) {
+                    this.activeMovieProvidersLogos.push(prov.logo_path)
+                }
+
+            })
+        })
+
+        this.activeMovieProvidersLogos = this.activeMovieProvidersLogos.slice(0, 4)
+        console.log("providerlist", this.activeMovieProvidersLogos)
     },
     roundHalveNumber(number) {
         let integerPart = Math.floor(number.toFixed(1));
