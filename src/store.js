@@ -39,6 +39,9 @@ export const store = reactive({
 
         });
     },
+    isDirectorInArray(name) {
+        return this.activeMovieDirectors.some(director => director.name === name);
+    },
     getDetails(id, media_type) {
         if (media_type !== "tv") {
             media_type = "movie"
@@ -48,13 +51,14 @@ export const store = reactive({
         })
     },
     getImages(id, media_type) {
+        this.activeMovieLogo = ''
         if (media_type !== "tv") {
             media_type = "movie"
         }
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/images?api_key=${this.apiKey}`).then((res) => {
             console.log(res.data.logos)
             res.data.logos.forEach((logo) => {
-                if (logo.iso_639_1 === "en" && logo.height < 500) {
+                if (logo.iso_639_1 === "en" && logo.height < 550) {
                     this.activeMovieLogo = logo.file_path
                     return
                 }
@@ -74,12 +78,20 @@ export const store = reactive({
             this.activeMovieDirectors = []
             console.log(res.data)
             res.data.crew.forEach((member) => {
-                if (member.job === "Director") {
-                    this.activeMovieDirectors.push(member)
-                } else if (member.department === "Writing") {
-                    this.activeMovieDirectors.push(member)
+                if ((member.job === "Director" || member.department === "Writing") && !this.isDirectorInArray(member.name)) {
+                    this.activeMovieDirectors.push(member);
+                    console.log(this.activeMovieDirectors);
                 }
-            })
+            });
+            this.activeMovieDirectors.sort((a, b) => {
+                if (a.job === "Director" && b.job !== "Director") {
+                    return -1;
+                } else if (a.job !== "Director" && b.job === "Director") {
+                    return 1;
+                }
+                return 0;
+            });
+            this.activeMovieDirectors = this.activeMovieDirectors.slice(0, 3);
 
         })
     },

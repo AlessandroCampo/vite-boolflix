@@ -45,10 +45,10 @@
 
             <p class="actorList">
                 <strong> Directors: </strong>
-                <span v-for="(dir, index) in store.activeMovieDeatils.created_by" :key=index>
+                <!-- <span v-for="(dir, index) in store.activeMovieDeatils.created_by" :key=index>
                     {{ index !== store.activeMovieDeatils.created_by.length - 1 ? dir.name + "," + " " :
                         dir.name }}
-                </span>
+                </span> -->
                 <span v-for="(dir, index) in store.activeMovieDirectors" :key=index>
                     {{ index !== store.activeMovieDirectors.length - 1 ? dir.name + "," + " " :
                         dir.name }}
