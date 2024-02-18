@@ -90,9 +90,12 @@
             </div>
 
         </div>
-        <iframe width="100%" height="100%" :src="`https://www.youtube.com/embed/${store.previewID}?autoplay=1`"
-            v-if="trailerWatch" allowfullscreen>
-        </iframe>
+        <div class="video-container">
+            <iframe :src="`https://www.youtube.com/embed/${store.previewID}?autoplay=1&showinfo=0&controls=0&vq=hd1080`
+                " v-if="trailerWatch" allowfullscreen frameborder="0">
+            </iframe>
+        </div>
+
 
 
 
@@ -183,15 +186,23 @@ figure {
     background-position: 50% 10%;
     position: relative;
 
+    .video-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%;
 
-    .num_info {
-        display: flex;
-        align-items: center;
-        line-height: 15px;
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 68%;
+            border: 0;
+        }
     }
 
     .movie-info {
-        background-color: rgba(0, 0, 0, 0.8);
+        background-color: rgba(0, 0, 0, 0.5);
         color: white;
         width: fit-content;
         max-width: 30%;
@@ -201,12 +212,18 @@ figure {
         gap: 0.8em;
         // height: 90%;
         position: absolute;
-        left: 8%;
+        left: 2%;
         bottom: 50%;
         transform: translateY(50%);
         overflow: hidden;
 
+        z-index: 1;
 
+        .num_info {
+            display: flex;
+            align-items: center;
+            line-height: 15px;
+        }
 
         p.description {
             max-height: 35%;
@@ -277,6 +294,12 @@ figure {
             }
         }
 
+        iframe {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
     }
 }
 
@@ -288,7 +311,7 @@ figure#homeBG {
 
     div {
         font-size: 45px;
-        background-color: rgba(0, 0, 0, 0.9);
+        background-color: rgba(0, 0, 0, 0.6);
         color: white;
         width: fit-content;
         padding: 20px;

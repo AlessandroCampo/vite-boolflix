@@ -93,7 +93,7 @@ export default {
   },
   created() {
     store.getGenre("movie")
-    console.log(store.allGenres)
+    store.generateForYou()
     window.addEventListener("scroll", () => {
       const header = document.querySelector("header");
       if (window.scrollY === 0) {
@@ -167,6 +167,7 @@ export default {
         if (newGenreFilter !== oldGenreFilter) {
 
           this.updateFilteredResults();
+          store.activeMovieRec = []
         }
       },
       immediate: true
@@ -228,6 +229,8 @@ export default {
       v-if="store.page === 'Personal' && store.watchList.length > 0" />
     <AppRow :rowTitle="`Favourites`" :moviesArray="store.favList"
       v-if="store.page === 'Personal' && store.favList.length > 0" />
+    <AppRow :rowTitle="`Chosen for you`" :moviesArray="store.chosenForYou"
+      v-if="store.page === 'Personal' && store.chosenForYou.length > 0" />
 
     <h1 class="text-center text-4xl mt-12" v-if="store.favList.length == 0 && store.watchList.length == 0"> START FILLING
       YOUR WATCHLIST AND FAVLIST </h1>
@@ -245,7 +248,7 @@ header {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 3;
+  z-index: 13;
 }
 
 .rows-cont {

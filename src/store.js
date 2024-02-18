@@ -11,6 +11,7 @@ export const store = reactive({
     activeMovieLogo: '',
     activeMovieProvidersLogos: [],
     activeMovieRec: [],
+    chosenForYou: [],
     watchList: JSON.parse(localStorage.getItem('watchlist')) || [],
     favList: JSON.parse(localStorage.getItem('favlist')) || [],
     bgUrl: '',
@@ -31,7 +32,7 @@ export const store = reactive({
             media_type = "movie"
         }
         this.previewID = ''
-        axios.get(`https://api.themoviedb.org/3//${media_type}/${id}/videos?api_key=${this.apiKey}&language=en-US`).then((res) => {
+        axios.get(`https://api.themoviedb.org/3//${media_type}/${id}/videos?api_key=${this.apiKey}&language=${store.lang}`).then((res) => {
 
             res.data.results.forEach(res => {
                 if ((res.name === "Official Trailer") || (res.type === "Trailer" && res.official && res.site === "YouTube")) {
@@ -161,7 +162,7 @@ export const store = reactive({
         if (media_type !== "tv") {
             media_type = "movie"
         }
-        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/recommendations?api_key=${this.apiKey}`).then((res) => {
+        axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/recommendations?api_key=${this.apiKey}&language=${store.lang}`).then((res) => {
 
             res.data.results.forEach((rec) => {
                 this.activeMovieRec.push(rec)
@@ -170,6 +171,58 @@ export const store = reactive({
         })
 
     },
+    generateForYou() {
+        let favListIdArray = [];
+        store.favList.forEach((fav) => {
+            let favObj = {
+                id: fav.id,
+                media_type: fav.media_type
+            };
+            favListIdArray.push(favObj);
+        });
+
+        let promises = favListIdArray.map((el) => {
+            return axios.get(`https://api.themoviedb.org/3/${el.media_type}/${el.id}/recommendations?api_key=${this.apiKey}&language=${store.lang}`)
+                .then((res) => {
+                    return res.data.results.slice(0, 5);
+                });
+        });
+
+        Promise.all(promises)
+            .then((recommendationsArray) => {
+
+                let flattenedRecommendations = recommendationsArray.flat();
+
+                let filteredRecommendations = flattenedRecommendations.filter((recommendation) => {
+                    return !favListIdArray.some((fav) => fav.id === recommendation.id && fav.media_type === recommendation.media_type);
+                });
+
+                let shuffledRecommendations = this.shuffleArray(filteredRecommendations);
+
+                let chosenForYouSet = new Set();
+                shuffledRecommendations.forEach((recommendation) => {
+                    if (chosenForYouSet.size < 20 && !chosenForYouSet.has(recommendation.id)) {
+                        store.chosenForYou.push(recommendation);
+                        chosenForYouSet.add(recommendation.id);
+                    }
+                });
+                console.log(store.chosenForYou);
+            })
+            .catch((error) => {
+                console.error("Error fetching recommendations:", error);
+            });
+    },
+
+    shuffleArray(array) {
+        for (let i = array.length - 1;i > 0;i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    ,
+
 
     roundHalveNumber(number) {
         let integerPart = Math.floor(number.toFixed(1));

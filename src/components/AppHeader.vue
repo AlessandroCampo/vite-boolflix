@@ -65,7 +65,7 @@ export default {
         getMovies() {
             // reset my array
             store.foundMovies = []
-            axios.get(`https://api.themoviedb.org/3/search/multi?api_key=${store.apiKey}&query=${store.searchString}`).then((res) => {
+            axios.get(`https://api.themoviedb.org/3/search/multi?api_key=${store.apiKey}&query=${store.searchString}&language=${store.lang}`).then((res) => {
                 store.foundMovies = res.data.results
                 store.foundMovies.sort((a, b) => b.vote_count - a.vote_count)
 
@@ -82,6 +82,7 @@ export default {
 
         },
         changePage(newPage, e) {
+            store.activeMovieRec = []
             const menuLinks = document.querySelectorAll("header ul li")
             menuLinks.forEach((link) => {
 
