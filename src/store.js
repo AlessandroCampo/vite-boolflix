@@ -27,7 +27,7 @@ export const store = reactive({
     starsHalf: 0,
     emptyStars: 0,
     getTrailer(id, media_type) {
-        console.log(id)
+
         if (media_type !== "tv") {
             media_type = "movie"
         }
@@ -55,7 +55,7 @@ export const store = reactive({
         }
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${this.apiKey}&language=${store.lang}`).then((res) => {
             this.activeMovieDeatils = res.data
-            console.log(this.activeMovieDeatils)
+
         })
     },
     getImages(id, media_type) {
@@ -84,7 +84,7 @@ export const store = reactive({
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}/credits?api_key=${this.apiKey}`).then((res) => {
             this.activeMovieCast = res.data.cast.slice(0, 5)
             this.activeMovieDirectors = []
-            console.log(res.data.crew)
+
             res.data.crew.forEach((member) => {
                 if ((member.job === "Director" || member.department === "Writing" || member.job === "Executive Producer") && !this.isDirectorInArray(member.name)) {
                     this.activeMovieDirectors.push(member);
@@ -104,14 +104,15 @@ export const store = reactive({
         })
     },
     getGenre(media_type) {
+        this.allGenres = []
         if (media_type !== "tv") {
             media_type = "movie"
         }
-        axios.get(`https://api.themoviedb.org/3/genre/${media_type}/list?language=${store.lang}&api_key=${this.apiKey}`).then((res) => {
+        axios.get(`https://api.themoviedb.org/3/genre/${media_type}/list?&api_key=${this.apiKey}`).then((res) => {
 
             res.data.genres.forEach((genre) => {
                 this.allGenres.push(genre)
-                if (genre.id !== 28 && genre.id !== 10752 && genre.id !== 878 && genre.name !== "Fantasy" && genre.id !== 53) {
+                if (genre.id !== 28 && genre.id !== 10752 && genre.id !== 12 && genre.id !== 878 && genre.name !== "Fantasy" && genre.id !== 53) {
                     this.optimizedGenres.push(genre)
                 }
 
@@ -126,6 +127,7 @@ export const store = reactive({
                     this.optimizedGenres.push(genre)
                 }
             })
+            console.log(this.optimizedGenres)
 
             this.optimizedGenres.sort((a, b) => {
                 const nameA = a.name.toLowerCase(); // Convert names to lowercase for case-insensitive sorting
@@ -155,7 +157,7 @@ export const store = reactive({
         })
 
         this.activeMovieProvidersLogos = this.activeMovieProvidersLogos.slice(0, 4)
-        console.log("providerlist", this.activeMovieProvidersLogos)
+
     },
     getRec(id, media_type) {
         this.activeMovieRec = []
@@ -167,7 +169,7 @@ export const store = reactive({
             res.data.results.forEach((rec) => {
                 this.activeMovieRec.push(rec)
             })
-            console.log("papero", this.activeMovieRec)
+
         })
 
     },
@@ -180,6 +182,7 @@ export const store = reactive({
             };
             favListIdArray.push(favObj);
         });
+        console.log(store.favList)
 
         let promises = favListIdArray.map((el) => {
             return axios.get(`https://api.themoviedb.org/3/${el.media_type}/${el.id}/recommendations?api_key=${this.apiKey}&language=${store.lang}`)
@@ -206,7 +209,8 @@ export const store = reactive({
                         chosenForYouSet.add(recommendation.id);
                     }
                 });
-                console.log(store.chosenForYou);
+                console.log(store.chosenForYou)
+
             })
             .catch((error) => {
                 console.error("Error fetching recommendations:", error);

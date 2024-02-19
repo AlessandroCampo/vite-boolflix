@@ -29,6 +29,10 @@ export default {
     },
     methods: {
         updateActive(movie) {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
             store.activeMovie = movie
             store.foundMovies = []
             store.updateStars()

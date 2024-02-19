@@ -91,9 +91,10 @@
 
         </div>
         <div class="video-container">
-            <iframe :src="`https://www.youtube.com/embed/${store.previewID}?autoplay=1&showinfo=0&controls=0&vq=hd1080`
-                " v-if="trailerWatch" allowfullscreen frameborder="0">
-            </iframe>
+            <iframe
+                :src="`https://www.youtube.com/embed/${store.previewID}?autoplay=1&showinfo=0&controls=0&vq=hd1080&rel=0`"
+                v-if="trailerWatch" allowfullscreen frameborder="0"></iframe>
+
         </div>
 
 
@@ -131,11 +132,11 @@ export default {
         },
         convertGenreId(id) {
             let genreName = ''
-            console.log(store.allGenres)
+
             store.allGenres.forEach((genre) => {
                 if (genre.id === id) {
                     genreName = genre.name
-                    console.log(genre.name)
+
                 }
             })
             return genreName
@@ -149,7 +150,7 @@ export default {
             }
             localStorage.setItem('watchlist', JSON.stringify(store.watchList));
 
-            console.log(store.watchList);
+
         },
         addToFavlist() {
             const existingIndex = store.favList.findIndex(existingMovie => existingMovie.id === store.activeMovie.id);
@@ -160,7 +161,7 @@ export default {
             }
             localStorage.setItem('favlist', JSON.stringify(store.favList));
 
-            console.log(store.favList);
+
         }
 
 
@@ -196,7 +197,7 @@ figure {
             top: 0;
             left: 0;
             width: 100%;
-            height: 68%;
+            height: 73vh;
             border: 0;
         }
     }

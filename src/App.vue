@@ -54,7 +54,7 @@ export default {
 
       switch (genre_id) {
         case 10759:
-          genre_id = '28%7C10759';
+          genre_id = '28%7C10759%7C12';
           break;
         case 10768:
           genre_id = '10752%7C10768';
@@ -71,7 +71,15 @@ export default {
       if (media_type !== "multi") {
         axios.get(`https://api.themoviedb.org/3/discover/${media_type}?api_key=${store.apiKey}&with_genres=${genre_id}&sort_by=${query}&page=1&vote_count.gte=150`)
           .then((res) => {
+            res.data.results.forEach((el) => {
+              el.media_type = media_type
+            })
             targetArray.push(...res.data.results);
+            if (targetArray == this.filteredPopular && this.filteredPopular.length > 0) {
+
+              this.updateActive(this.filteredPopular[0])
+            }
+
           });
       } else {
         const moviePromise = axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&with_genres=${genre_id}&sort_by=${query}&page=1&vote_count.gte=150`);
@@ -79,15 +87,36 @@ export default {
 
         Promise.all([moviePromise, tvPromise])
           .then(([movieRes, tvRes]) => {
-            targetArray.push(...movieRes.data.results, ...tvRes.data.results);
+            const moviesWithMediaType = movieRes.data.results.map(movie => ({ ...movie, media_type: 'movie' }));
+            const tvWithMediaType = tvRes.data.results.map(tv => ({ ...tv, media_type: 'tv' }));
+            targetArray.push(...moviesWithMediaType, ...tvWithMediaType);
             targetArray.sort((a, b) => b.vote_count - a.vote_count);
+            if (targetArray == this.filteredPopular && this.filteredPopular.length > 0) {
+              this.updateActive(this.filteredPopular[0]);
+            }
           });
+
       }
     },
-    updateFilteredResults() {
-      this.getFilteredByGenre(store.genreFilter, 'vote_count.desc', this.filteredPopular);
-      this.getFilteredByGenre(store.genreFilter, 'vote_average.desc', this.filteredTopRated);
-      this.getFilteredByGenre(store.genreFilter, 'primary_release_date.desc', this.filteredLatest);
+    async updateFilteredResults() {
+      await Promise.all([
+        this.getFilteredByGenre(store.genreFilter, 'vote_count.desc', this.filteredPopular),
+        this.getFilteredByGenre(store.genreFilter, 'vote_average.desc', this.filteredTopRated),
+        this.getFilteredByGenre(store.genreFilter, 'primary_release_date.desc', this.filteredLatest)
+      ]);
+      console.log(this.filteredPopular)
+    }
+    ,
+    updateActive(movie) {
+      store.activeMovie = movie
+      store.foundMovies = []
+      store.updateStars()
+      store.getTrailer(store.activeMovie.id, store.activeMovie.media_type)
+      store.getDetails(store.activeMovie.id, store.activeMovie.media_type)
+      store.getCast(store.activeMovie.id, store.activeMovie.media_type)
+      store.getImages(store.activeMovie.id, store.activeMovie.media_type)
+      store.getProviders(store.activeMovie.id, store.activeMovie.media_type)
+      store.getRec(store.activeMovie.id, store.activeMovie.media_type)
     }
 
   },
@@ -161,11 +190,11 @@ export default {
     });
   },
   components: { AppHeader, AppPreview, AppRow },
+
   watch: {
     'store.genreFilter': {
       handler(newGenreFilter, oldGenreFilter) {
         if (newGenreFilter !== oldGenreFilter) {
-
           this.updateFilteredResults();
           store.activeMovieRec = []
         }
@@ -175,12 +204,14 @@ export default {
     'store.page': {
       handler(newPage, oldPage) {
         if (newPage !== oldPage) {
-          console.log("Page changed");
+          console.log("page changed")
           this.updateFilteredResults();
         }
       },
       immediate: true
     }
+
+
   }
 
 }
@@ -201,30 +232,30 @@ export default {
       v-if="store.foundMovies.length > 1" />
     <AppRow :rowTitle="`If you liked ${store.activeMovie.name || store.activeMovie.title}`"
       :moviesArray="store.activeMovieRec" v-if="store.activeMovieRec.length > 0" />
-    <AppRow rowTitle="Trending on Boolflix" :moviesArray="trendingAll"
+    <AppRow rowTitle="Trending on WOP" :moviesArray="trendingAll"
       v-if="store.page === 'Home' && store.genreFilter == 0" />
-    <AppRow rowTitle="Most popular on Boolflix" :moviesArray="popularAll"
+    <AppRow rowTitle="Most popular on WOP" :moviesArray="popularAll"
       v-if="store.page === 'Home' && store.genreFilter == 0" />
-    <AppRow rowTitle="Top Rated on Boolflix" :moviesArray="topRatedAll"
+    <AppRow rowTitle="Top Rated on WOP" :moviesArray="topRatedAll"
       v-if="store.page === 'Home' && store.genreFilter == 0" />
-    <AppRow rowTitle="Trending shows on Boolflix" :moviesArray="trendingShows"
+    <AppRow rowTitle="Trending shows on WOP" :moviesArray="trendingShows"
       v-if="store.page === 'Series' && store.genreFilter == 0" />
-    <AppRow rowTitle="Most popular shows on Boolflix" :moviesArray="popularShows"
+    <AppRow rowTitle="Most popular shows on WOP" :moviesArray="popularShows"
       v-if="store.page === 'Series' && store.genreFilter == 0" />
-    <AppRow rowTitle="Top Rated shows on Boolflix" :moviesArray="topRatedShows"
+    <AppRow rowTitle="Top Rated shows on WOP" :moviesArray="topRatedShows"
       v-if="store.page === 'Series' && store.genreFilter == 0" />
-    <AppRow rowTitle="Trending movies on Boolflix" :moviesArray="trendingMovies"
+    <AppRow rowTitle="Trending movies on WOP" :moviesArray="trendingMovies"
       v-if="store.page === 'Movies' && store.genreFilter == 0" />
-    <AppRow rowTitle="Most popular movies on Boolflix" :moviesArray="popularMovies"
+    <AppRow rowTitle="Most popular movies on WOP" :moviesArray="popularMovies"
       v-if="store.page === 'Movies' && store.genreFilter == 0" />
-    <AppRow rowTitle="Top Rated movies on Boolflix" :moviesArray="topRatedMovies"
+    <AppRow rowTitle="Top Rated movies on WOP" :moviesArray="topRatedMovies"
       v-if="store.page === 'Movies' && store.genreFilter == 0" />
     <AppRow :rowTitle="`Popular ${getGenreName(store.genreFilter)}`" :moviesArray="filteredPopular"
-      v-if="store.genreFilter != 0" />
+      v-if="store.genreFilter != 0 && store.page !== 'Personal'" />
     <AppRow :rowTitle="`Latest ${getGenreName(store.genreFilter)}`" :moviesArray="filteredLatest"
-      v-if="store.genreFilter != 0" />
+      v-if="store.genreFilter != 0 && store.page !== 'Personal'" />
     <AppRow :rowTitle="`Top Rated ${getGenreName(store.genreFilter)}`" :moviesArray="filteredTopRated"
-      v-if="store.genreFilter != 0" />
+      v-if="store.genreFilter != 0 && store.page !== 'Personal'" />
     <AppRow :rowTitle="`Watchlist`" :moviesArray="store.watchList"
       v-if="store.page === 'Personal' && store.watchList.length > 0" />
     <AppRow :rowTitle="`Favourites`" :moviesArray="store.favList"
@@ -232,7 +263,8 @@ export default {
     <AppRow :rowTitle="`Chosen for you`" :moviesArray="store.chosenForYou"
       v-if="store.page === 'Personal' && store.chosenForYou.length > 0" />
 
-    <h1 class="text-center text-4xl mt-12" v-if="store.favList.length == 0 && store.watchList.length == 0"> START FILLING
+    <h1 class="text-center text-4xl mt-12"
+      v-if="store.favList.length == 0 && store.watchList.length == 0 && store.page === 'Personal'"> START FILLING
       YOUR WATCHLIST AND FAVLIST </h1>
 
 
