@@ -76,7 +76,6 @@ export default {
             })
             targetArray.push(...res.data.results);
             if (targetArray == this.filteredPopular && this.filteredPopular.length > 0) {
-
               this.updateActive(this.filteredPopular[0])
             }
 
@@ -117,6 +116,24 @@ export default {
       store.getImages(store.activeMovie.id, store.activeMovie.media_type)
       store.getProviders(store.activeMovie.id, store.activeMovie.media_type)
       store.getRec(store.activeMovie.id, store.activeMovie.media_type)
+    },
+    pageChangeActive(newPage) {
+      console.log(newPage)
+      let newActiveMovie
+      switch (newPage) {
+        case 'Home':
+          newActiveMovie = this.trendingAll[0]
+          break;
+        case 'Series':
+          newActiveMovie = this.trendingShows[0]
+          break;
+        case 'Movies':
+          newActiveMovie = this.trendingMovies[0]
+          break;
+      }
+      store.activeMovieRec = []
+      this.updateActive(newActiveMovie)
+
     }
 
   },
@@ -204,8 +221,9 @@ export default {
     'store.page': {
       handler(newPage, oldPage) {
         if (newPage !== oldPage) {
-          console.log("page changed")
+
           this.updateFilteredResults();
+
         }
       },
       immediate: true
@@ -221,7 +239,7 @@ export default {
 <template
 >
   <header>
-    <AppHeader />
+    <AppHeader @page-changed="pageChangeActive" />
   </header>
   <section>
     <AppPreview />

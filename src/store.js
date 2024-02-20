@@ -40,7 +40,7 @@ export const store = reactive({
                     return
                 }
             })
-            if (!this.previewID) {
+            if (!this.previewID && res.data.results[0]?.key) {
                 this.previewID = res.data.results[0].key
             }
 
@@ -55,6 +55,7 @@ export const store = reactive({
         }
         axios.get(`https://api.themoviedb.org/3/${media_type}/${id}?api_key=${this.apiKey}&language=${store.lang}`).then((res) => {
             this.activeMovieDeatils = res.data
+
 
         })
     },
@@ -250,6 +251,9 @@ export const store = reactive({
             store.starsHalf = 1;
         }
         store.emptyStars = 5 - store.starsNumber - store.starsHalf
+
+
+
     },
     deepClone(obj) {
         return JSON.parse(JSON.stringify(obj));

@@ -5,7 +5,7 @@
         <div class="movie-info">
 
             <img :src="`https://image.tmdb.org/t/p/original/${store.activeMovieLogo}`" alt="" class="movie_logo mb-4"
-                style="width: 420px; max-height:200px;" v-if="store.activeMovieLogo">
+                style="width: 380px; max-height:200px;" v-if="store.activeMovieLogo">
 
             <p class="title" v-else>
                 {{ store.activeMovie.title ? store.activeMovie.title : store.activeMovie.name }}
@@ -13,11 +13,20 @@
             <div class="flex items-center gap-3">
                 <img :src="store.convertFlag(store.activeMovie.original_language)" alt="" style="width: 50px;">
                 <div class="review">
-                    {{ store.roundHalveNumber(store.activeMovie.vote_average) }}
-                    <i class="fa-solid fa-star text-yellow-400" v-for="index in store.starsNumber" :key="index"></i>
+                    {{ (store.activeMovie.vote_average / 2).toFixed(1) }}
+                    <!-- {{ store.roundHalveNumber(store.activeMovie.vote_average) }} -->
+                    <!-- <i class="fa-solid fa-star text-yellow-400" v-for="index in store.starsNumber" :key="index"></i>
                     <i class="fa-solid fa-star-half-stroke text-yellow-400" v-for="index in store.starsHalf"
-                        :key="index"></i>
-                    <i class="fa-regular fa-star" v-for="index in store.emptyStars" :key="index"></i>
+                        :key="index"></i> -->
+                    <div class="stars-container">
+                        <img :src="count == Math.ceil(store.activeMovie.vote_average / 2) ? getStarImagePath() : './src/assets/img/stars/star-5.png'"
+                            alt="" v-for="count in Math.ceil(store.activeMovie.vote_average / 2)" :key="count">
+                    </div>
+
+
+
+
+
                     ({{ store.activeMovie.vote_count }})
                 </div>
                 <span v-if="store.activeMovieProvidersLogos.length > 0" class="prov-list">
@@ -28,10 +37,15 @@
             </div>
             <div>
                 <p class="num_info">
-                    {{ store.activeMovieDeatils?.release_date ? store.activeMovieDeatils.release_date.split("-")[0] :
+                    {{ store.activeMovieDeatils?.release_date ? store.activeMovieDeatils?.release_date.split("-")[0] :
                         store.activeMovie.first_air_date.split("-")[0] }} |
-                    {{ store.activeMovieDeatils.runtime ? convertDuration(store.activeMovieDeatils.runtime) :
-                        `${store.activeMovieDeatils.number_of_seasons} seasons (${store.activeMovieDeatils.status})` }}
+                    {{ store.activeMovieDeatils?.runtime ? convertDuration(store.activeMovieDeatils?.runtime) :
+                        `${store.activeMovieDeatils?.number_of_seasons} seasons (${store.activeMovieDeatils?.status !==
+                            'Returning Series' ? store.activeMovieDeatils?.status : 'Ongoing'})` }} |
+                    <span v-for="(id, index) in store.activeMovie.genre_ids" :key=index class="genre-list">
+                        {{ index !== store.activeMovie.genre_ids.length - 1 ? convertGenreId(id) + "," + " " :
+                            convertGenreId(id) }}
+                    </span>
                 </p>
 
 
@@ -63,13 +77,10 @@
 
                 </p>
 
-                <p class="actorList">
+                <!-- <p class="actorList">
                     <strong> Genres: </strong>
-                    <span v-for="(id, index) in store.activeMovie.genre_ids" :key=index>
-                        {{ index !== store.activeMovie.genre_ids.length - 1 ? convertGenreId(id) + "," + " " :
-                            convertGenreId(id) }}
-                    </span>
-                </p>
+
+                </p> -->
             </div>
 
 
@@ -162,7 +173,35 @@ export default {
             localStorage.setItem('favlist', JSON.stringify(store.favList));
 
 
+        },
+        getStarImagePath() {
+            const decimal = (store.activeMovie.vote_average / 2).toFixed(1).split('.')[1]
+            console.log(decimal)
+
+            if (decimal == 0) {
+                return './src/assets/img/stars/star-5.png'
+            } else if (decimal <= 2) {
+                return './src/assets/img/stars/star-1.png'
+            } else if (decimal > 2 && decimal <= 5) {
+                return './src/assets/img/stars/star-2.png'
+            } else if (decimal > 6 && decimal <= 7) {
+                return './src/assets/img/stars/star-3.png'
+            }
+            else if (decimal > 7 && decimal <= 9) {
+                return './src/assets/img/stars/star-4.png'
+            }
+        },
+
+        getColor() {
+            const decimal = parseFloat((store.activeMovie.vote_average / 2).toFixed(1).split('.')[1]);
+
+            const percentage = decimal * 10; // Convert decimal to percentage
+
+            return `linear-gradient(to right, gold ${percentage}%, transparent ${percentage}%)`;
         }
+
+
+
 
 
     },
@@ -203,22 +242,34 @@ figure {
     }
 
     .movie-info {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.6);
         color: white;
         width: fit-content;
-        max-width: 30%;
+        max-width: 33%;
         padding: 30px;
         display: flex;
         flex-direction: column;
         gap: 0.8em;
         // height: 90%;
         position: absolute;
-        left: 2%;
+        left: 1.5%;
         bottom: 50%;
         transform: translateY(50%);
         overflow: hidden;
+        max-height: 90%;
 
         z-index: 1;
+
+        .genre-list {
+            font-size: 0.7em;
+            font-style: italic;
+            margin-left: 0.2em;
+            color: darkgray;
+        }
+
+        img {
+            width: 20px;
+        }
 
         .num_info {
             display: flex;
@@ -227,7 +278,7 @@ figure {
         }
 
         p.description {
-            max-height: 35%;
+            max-height: 25%;
             overflow: auto;
             font-size: 0.8em;
         }
@@ -243,10 +294,11 @@ figure {
 
         .actorList {
 
-            font-size: 0.8em;
+            font-size: 0.7em;
 
             span {
                 font-style: italic;
+                color: darkgray;
             }
 
             strong {
@@ -281,11 +333,11 @@ figure {
                 display: flex;
                 align-items: center;
                 gap: 0.8em;
-                font-size: 18px;
+                font-size: 16px;
                 border-radius: 20px;
 
                 i {
-                    font-size: 22px;
+                    font-size: 20px;
                 }
             }
 
@@ -302,7 +354,29 @@ figure {
         }
 
     }
+
+    .review {
+        display: flex;
+        gap: 0.5em;
+        align-items: center;
+    }
+
+
+
+    .stars-container {
+
+        display: flex;
+        align-items: center;
+
+
+        img {
+            width: 22px;
+        }
+    }
+
+
 }
+
 
 figure#homeBG {
     background-image: url('../assets/img/homepage_bg.jpg');

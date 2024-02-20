@@ -14,7 +14,8 @@
 
         <nav>
             <ul>
-                <li class="active" @click="changePage('Home', $event)"> {{ store.lang == 'en' ? "Home" : "Home" }} </li>
+                <li class="active" @click="changePage('Home', $event)"> {{ store.lang == 'en' ? "Home" : "Home" }}
+                </li>
                 <li @click="changePage('Series', $event)"> {{ store.lang == 'en' ? "TV Shows" : "Serie TV" }} </li>
                 <li @click="changePage('Movies', $event)"> {{ store.lang == 'en' ? "Movies" : "Film" }} </li>
                 <li v-show="store.page !== 'Personal'">
@@ -82,6 +83,7 @@ export default {
 
         },
         changePage(newPage, e) {
+            this.$emit('page-changed', newPage);
             store.activeMovieRec = []
             const menuLinks = document.querySelectorAll("header ul li")
             menuLinks.forEach((link) => {
