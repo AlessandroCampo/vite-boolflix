@@ -29,6 +29,7 @@ export default {
     },
     methods: {
         updateActive(movie) {
+            console.log(movie)
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
@@ -43,6 +44,9 @@ export default {
             store.getProviders(store.activeMovie.id, store.activeMovie.media_type)
             store.getRec(store.activeMovie.id, store.activeMovie.media_type)
         }
+    },
+    computed: {
+
     }
 }
 </script>

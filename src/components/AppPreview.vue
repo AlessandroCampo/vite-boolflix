@@ -12,23 +12,15 @@
             </p>
             <div class="flex items-center gap-3">
                 <img :src="store.convertFlag(store.activeMovie.original_language)" alt="" style="width: 50px;">
-                <div class="review">
-                    {{ (store.activeMovie.vote_average / 2).toFixed(1) }}
-                    <!-- {{ store.roundHalveNumber(store.activeMovie.vote_average) }} -->
-                    <!-- <i class="fa-solid fa-star text-yellow-400" v-for="index in store.starsNumber" :key="index"></i>
-                    <i class="fa-solid fa-star-half-stroke text-yellow-400" v-for="index in store.starsHalf"
-                        :key="index"></i> -->
+                <!-- <div class="review">
+                    {{ (store.activeMovie?.vote_average / 2).toFixed(1) }}
+
                     <div class="stars-container">
-                        <img :src="count == Math.ceil(store.activeMovie.vote_average / 2) ? getStarImagePath() : './src/assets/img/stars/star-5.png'"
-                            alt="" v-for="count in Math.ceil(store.activeMovie.vote_average / 2)" :key="count">
+                        <img :src="count == Math.ceil(store.activeMovie?.vote_average / 2) ? getStarImagePath() : './src/assets/img/stars/star-5.png'"
+                            alt="" v-for="count in Math.ceil(store.activeMovie?.vote_average / 2)" :key="count">
                     </div>
-
-
-
-
-
                     ({{ store.activeMovie.vote_count }})
-                </div>
+                </div> -->
                 <span v-if="store.activeMovieProvidersLogos.length > 0" class="prov-list">
                     <img :src="`https://image.tmdb.org/t/p/original/${logo}`" alt=""
                         v-for="(logo, index) in store.activeMovieProvidersLogos" :key="index">
@@ -38,13 +30,13 @@
             <div>
                 <p class="num_info">
                     {{ store.activeMovieDeatils?.release_date ? store.activeMovieDeatils?.release_date.split("-")[0] :
-                        store.activeMovie.first_air_date.split("-")[0] }} |
+        store.activeMovie.first_air_date.split("-")[0] }} |
                     {{ store.activeMovieDeatils?.runtime ? convertDuration(store.activeMovieDeatils?.runtime) :
-                        `${store.activeMovieDeatils?.number_of_seasons} seasons (${store.activeMovieDeatils?.status !==
-                            'Returning Series' ? store.activeMovieDeatils?.status : 'Ongoing'})` }} |
+        `${store.activeMovieDeatils?.number_of_seasons} seasons (${store.activeMovieDeatils?.status !==
+            'Returning Series' ? store.activeMovieDeatils?.status : 'Ongoing'})` }} |
                     <span v-for="(id, index) in store.activeMovie.genre_ids" :key=index class="genre-list">
                         {{ index !== store.activeMovie.genre_ids.length - 1 ? convertGenreId(id) + "," + " " :
-                            convertGenreId(id) }}
+        convertGenreId(id) }}
                     </span>
                 </p>
 
@@ -60,7 +52,7 @@
                     <strong> Cast: </strong>
                     <span v-for="(actor, index) in store.activeMovieCast" :key=index>
                         {{ index !== store.activeMovieCast.length - 1 ? actor.name + "," + " " :
-                            actor.name }}
+        actor.name }}
                     </span>
                 </p>
 
@@ -72,7 +64,7 @@
                 </span> -->
                     <span v-for="(dir, index) in store.activeMovieDirectors" :key=index>
                         {{ index !== store.activeMovieDirectors.length - 1 ? dir.name + "," + " " :
-                            dir.name }}
+        dir.name }}
                     </span>
 
                 </p>
@@ -160,6 +152,7 @@ export default {
                 store.watchList.splice(existingIndex, 1);
             }
             localStorage.setItem('watchlist', JSON.stringify(store.watchList));
+            console.log(store.watchList)
 
 
         },
@@ -175,7 +168,7 @@ export default {
 
         },
         getStarImagePath() {
-            const decimal = (store.activeMovie.vote_average / 2).toFixed(1).split('.')[1]
+            const decimal = (store.activeMovie?.vote_average / 2).toFixed(1).split('.')[1]
             console.log(decimal)
 
             if (decimal == 0) {
@@ -193,7 +186,7 @@ export default {
         },
 
         getColor() {
-            const decimal = parseFloat((store.activeMovie.vote_average / 2).toFixed(1).split('.')[1]);
+            const decimal = parseFloat((store.activeMovie?.vote_average / 2).toFixed(1).split('.')[1]);
 
             const percentage = decimal * 10; // Convert decimal to percentage
 

@@ -2,10 +2,15 @@
     <h2> {{ rowTitle }} </h2>
     <div class="row-container">
         <i class="fa-solid fa-circle-chevron-left" @click="scroll('left')"></i>
-        <div class="row" ref="row">
-            <MovieCard v-for="(movie, index) in moviesArray" :movie="movie"
+        <div class="row" v-if="store.isLoading">
+            <PlaceHolder v-for="count in 5" :key="count"></PlaceHolder>
+        </div>
+
+        <div class="row" ref="row" v-else>
+            <MovieCard v-for=" (movie, index) in moviesArray" :movie="movie" :key="index"
                 v-show="(!research) || (research && checkResearch(movie.media_type))" />
         </div>
+
         <i class="fa-solid fa-circle-chevron-right" @click="scroll('right')"></i>
     </div>
 </template>
@@ -14,6 +19,8 @@
 
 import { store } from '../store'
 import MovieCard from './t2/MovieCard.vue'
+import PlaceHolder from './t2/PlaceHolder.vue'
+
 
 export default {
     props: {
@@ -22,12 +29,13 @@ export default {
         research: Boolean
     },
     data() {
-        return {}
+        return {
+            store
+        }
     },
-    components: { MovieCard },
+    components: { MovieCard, PlaceHolder },
     methods: {
         scroll(direction) {
-            console.log("clicked")
             const row = this.$refs.row
             let amount = (340 * 5) + (30 * 5)
             if (direction === 'left') {
@@ -62,6 +70,8 @@ h2 {
 }
 
 
+
+
 .row-container {
     position: relative;
     margin-top: 1em;
@@ -79,9 +89,6 @@ h2 {
         overflow-x: hidden;
         overflow-y: auto;
         transition: transform 0.5s ease;
-
-
-
     }
 }
 

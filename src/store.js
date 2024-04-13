@@ -26,6 +26,7 @@ export const store = reactive({
     starsNumber: 0,
     starsHalf: 0,
     emptyStars: 0,
+    isLoading: true,
     getTrailer(id, media_type) {
 
         if (media_type !== "tv") {
@@ -75,6 +76,7 @@ export const store = reactive({
             if (!this.activeMovieLogo) {
                 this.activeMovieLogo = res.data.logos[0].file_path
             }
+
 
         })
     },
@@ -128,7 +130,7 @@ export const store = reactive({
                     this.optimizedGenres.push(genre)
                 }
             })
-            console.log(this.optimizedGenres)
+
 
             this.optimizedGenres.sort((a, b) => {
                 const nameA = a.name.toLowerCase(); // Convert names to lowercase for case-insensitive sorting
@@ -183,7 +185,6 @@ export const store = reactive({
             };
             favListIdArray.push(favObj);
         });
-        console.log(store.favList)
 
         let promises = favListIdArray.map((el) => {
             return axios.get(`https://api.themoviedb.org/3/${el.media_type}/${el.id}/recommendations?api_key=${this.apiKey}&language=${store.lang}`)
@@ -210,26 +211,22 @@ export const store = reactive({
                         chosenForYouSet.add(recommendation.id);
                     }
                 });
-                console.log(store.chosenForYou)
+
 
             })
             .catch((error) => {
                 console.error("Error fetching recommendations:", error);
             });
     },
-
     shuffleArray(array) {
         for (let i = array.length - 1;i > 0;i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
-    }
-
-    ,
-
-
+    },
     roundHalveNumber(number) {
+        if (isNaN(number)) return
         let integerPart = Math.floor(number.toFixed(1));
         let decimalPart = number - integerPart;
 
@@ -245,7 +242,7 @@ export const store = reactive({
         store.starsNumber = 0
         store.starsHalf = 0
         store.emptyStars = 0
-        store.starsNumber = store.roundHalveNumber(store.activeMovie.vote_average)
+        store.starsNumber = store.roundHalveNumber(store.activeMovie?.vote_average) || 5
         if (store.starsNumber % 1 !== 0) {
             store.starsNumber -= 0.5;
             store.starsHalf = 1;

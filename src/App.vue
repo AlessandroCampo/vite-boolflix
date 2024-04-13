@@ -1,4 +1,4 @@
-<script >
+<script>
 import axios from 'axios';
 import AppHeader from './components/AppHeader.vue';
 import AppPreview from './components/AppPreview.vue';
@@ -77,6 +77,7 @@ export default {
             targetArray.push(...res.data.results);
             if (targetArray == this.filteredPopular && this.filteredPopular.length > 0) {
               this.updateActive(this.filteredPopular[0])
+
             }
 
           });
@@ -98,15 +99,18 @@ export default {
       }
     },
     async updateFilteredResults() {
+
       await Promise.all([
         this.getFilteredByGenre(store.genreFilter, 'vote_count.desc', this.filteredPopular),
         this.getFilteredByGenre(store.genreFilter, 'vote_average.desc', this.filteredTopRated),
         this.getFilteredByGenre(store.genreFilter, 'primary_release_date.desc', this.filteredLatest)
-      ]);
-      console.log(this.filteredPopular)
+      ])
+        ;
+
     }
     ,
     updateActive(movie) {
+      console.log(movie)
       store.activeMovie = movie
       store.foundMovies = []
       store.updateStars()
@@ -118,7 +122,7 @@ export default {
       store.getRec(store.activeMovie.id, store.activeMovie.media_type)
     },
     pageChangeActive(newPage) {
-      console.log(newPage)
+
       let newActiveMovie
       switch (newPage) {
         case 'Home':
@@ -130,14 +134,81 @@ export default {
         case 'Movies':
           newActiveMovie = this.trendingMovies[0]
           break;
+        case 'Personal':
+          newActiveMovie = store?.watchList[0]
+          break;
       }
       store.activeMovieRec = []
       this.updateActive(newActiveMovie)
 
+    },
+    async firstLoadingCalls() {
+      return new Promise((resolve) => {
+        axios.get(`https://api.themoviedb.org/3/trending/all/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc&language=${store.lang}`).then((res) => {
+
+          this.trendingAll = res.data.results
+        });
+        axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150&language=${store.lang}`).then((res) => {
+
+          for (let i = 0;i < 10;i++) {
+            res.data.results[i].media_type = "movie"
+            this.popularAll.push(res.data.results[i])
+          }
+          for (let i = 0;i < 20;i++) {
+            res.data.results[i].media_type = "movie"
+            this.popularMovies.push(res.data.results[i])
+          }
+
+
+
+        })
+        axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150&language=${store.lang}`).then((res) => {
+
+          for (let i = 0;i < 10;i++) {
+            res.data.results[i].media_type = "tv"
+            this.popularAll.push(res.data.results[i])
+          }
+          for (let i = 0;i < 20;i++) {
+            res.data.results[i].media_type = "tv"
+            this.popularShows.push(res.data.results[i])
+          }
+          this.popularAll.sort((a, b) => b.vote_average - a.vote_average)
+        })
+        axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&sort_by=vote_average.desc&page=1&vote_count.gte=350&language=${store.lang}`).then((res) => {
+          for (let i = 0;i < 10;i++) {
+            res.data.results[i].media_type = "movie"
+            this.topRatedAll.push(res.data.results[i])
+          }
+
+          for (let i = 0;i < 20;i++) {
+            res.data.results[i].media_type = "movie"
+            this.topRatedMovies.push(res.data.results[i])
+          }
+        })
+        axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${store.apiKey}&sort_by=vote_average.desc&page=1&vote_count.gte=350&language=${store.lang}`).then((res) => {
+          for (let i = 0;i < 10;i++) {
+            res.data.results[i].media_type = "tv"
+            this.topRatedAll.push(res.data.results[i])
+          }
+          for (let i = 0;i < 20;i++) {
+            res.data.results[i].media_type = "tv"
+            this.topRatedShows.push(res.data.results[i])
+          }
+          this.topRatedAll.sort((a, b) => b.vote_average - a.vote_average)
+        })
+        axios.get(`https://api.themoviedb.org/3/trending/movie/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc&language=${store.lang}`).then((res) => {
+          this.trendingMovies = res.data.results
+        });
+        axios.get(`https://api.themoviedb.org/3/trending/tv/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc&language=${store.lang}`).then((res) => {
+          this.trendingShows = res.data.results
+          resolve()
+        });
+      })
     }
 
   },
-  created() {
+  async created() {
+    console.log(store.watchList)
     store.getGenre("movie")
     store.generateForYou()
     window.addEventListener("scroll", () => {
@@ -148,81 +219,33 @@ export default {
         header.style.backgroundColor = "rgba(16, 27, 38, 1)";
       }
     });
+    await this.firstLoadingCalls()
+    store.isLoading = false
 
-    axios.get(`https://api.themoviedb.org/3/trending/all/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc&language=${store.lang}`).then((res) => {
 
-      this.trendingAll = res.data.results
-    });
-    axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150&language=${store.lang}`).then((res) => {
-
-      for (let i = 0;i < 10;i++) {
-        res.data.results[i].media_type = "movie"
-        this.popularAll.push(res.data.results[i])
-      }
-      for (let i = 0;i < 20;i++) {
-        res.data.results[i].media_type = "movie"
-        this.popularMovies.push(res.data.results[i])
-      }
-
-    })
-    axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${store.apiKey}&sort_by=vote_count.desc&page=1&vote_count.gte=150&language=${store.lang}`).then((res) => {
-
-      for (let i = 0;i < 10;i++) {
-        res.data.results[i].media_type = "tv"
-        this.popularAll.push(res.data.results[i])
-      }
-      for (let i = 0;i < 20;i++) {
-        res.data.results[i].media_type = "tv"
-        this.popularShows.push(res.data.results[i])
-      }
-      this.popularAll.sort((a, b) => b.vote_average - a.vote_average)
-    })
-    axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${store.apiKey}&sort_by=vote_average.desc&page=1&vote_count.gte=350&language=${store.lang}`).then((res) => {
-      for (let i = 0;i < 10;i++) {
-        res.data.results[i].media_type = "movie"
-        this.topRatedAll.push(res.data.results[i])
-      }
-
-      for (let i = 0;i < 20;i++) {
-        res.data.results[i].media_type = "movie"
-        this.topRatedMovies.push(res.data.results[i])
-      }
-    })
-    axios.get(`https://api.themoviedb.org/3/discover/tv?api_key=${store.apiKey}&sort_by=vote_average.desc&page=1&vote_count.gte=350&language=${store.lang}`).then((res) => {
-      for (let i = 0;i < 10;i++) {
-        res.data.results[i].media_type = "tv"
-        this.topRatedAll.push(res.data.results[i])
-      }
-      for (let i = 0;i < 20;i++) {
-        res.data.results[i].media_type = "tv"
-        this.topRatedShows.push(res.data.results[i])
-      }
-      this.topRatedAll.sort((a, b) => b.vote_average - a.vote_average)
-    })
-    axios.get(`https://api.themoviedb.org/3/trending/movie/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc&language=${store.lang}`).then((res) => {
-      this.trendingMovies = res.data.results
-    });
-    axios.get(`https://api.themoviedb.org/3/trending/tv/day?api_key=${store.apiKey}&query=${store.searchString}&page=1&sort_by=popularity.desc&language=${store.lang}`).then((res) => {
-      this.trendingShows = res.data.results
-    });
   },
   components: { AppHeader, AppPreview, AppRow },
 
   watch: {
     'store.genreFilter': {
-      handler(newGenreFilter, oldGenreFilter) {
+      async handler(newGenreFilter, oldGenreFilter) {
         if (newGenreFilter !== oldGenreFilter) {
-          this.updateFilteredResults();
+
+          await this.updateFilteredResults();
+
           store.activeMovieRec = []
         }
       },
       immediate: true
     },
     'store.page': {
-      handler(newPage, oldPage) {
+      async handler(newPage, oldPage) {
         if (newPage !== oldPage) {
-
-          this.updateFilteredResults();
+          store.isLoading = true
+          await this.updateFilteredResults();
+          setTimeout(() => {
+            store.isLoading = false
+          }, 800)
 
         }
       },
@@ -236,8 +259,7 @@ export default {
 
 </script>
 
-<template
->
+<template>
   <header>
     <AppHeader @page-changed="pageChangeActive" />
   </header>
